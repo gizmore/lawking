@@ -6,18 +6,27 @@ doit.py
 PyCharm/debug helper for lawking.
 
 Runs:
-    0. git reset --hard in ./gesetze
-    1. bookler.py   -> creates data/bookmap.json
-    2. decorator.py -> creates anchors
-    3. linker.py    -> creates links to anchors
-    4. indexer.py   -> creates browser search/navigation data
+    0. git reset --hard inside ./gesetze submodule
+    1. build/bookler.py   -> creates ./data/bookmap.json
+    2. build/decorator.py -> creates anchors
+    3. build/linker.py    -> creates links to anchors
+    4. build/indexer.py   -> creates ./data/books.json and ./data/search-index.json
 
-Put this file in your repo root next to:
+Expected repo layout:
+    doit.py
     build/
+        __init__.py
+        bookler.py
+        decorator.py
+        linker.py
+        indexer.py
     data/
-    gesetze/
+    gesetze/          # git submodule
+    index.html
+    app.js
+    app.css
 
-Then run/debug doit.py in PyCharm.
+Run/debug this file from the lawking repo root.
 """
 
 from __future__ import annotations
@@ -53,65 +62,97 @@ def run_tool(module_name: str, argv: list[str]) -> int:
         sys.argv = old_argv
 
 
+def ensure_build_package(repo_root: Path) -> None:
+    init_file = repo_root / "build" / "__init__.py"
+
+    if not init_file.exists():
+        init_file.write_text("", encoding="utf-8")
+
+
+def git_reset_hard(repo: Path) -> None:
+    subprocess.run(
+        ["git", "reset", "--hard"],
+        cwd=repo,
+        check=True,
+    )
+
+
 def main() -> int:
     repo_root = Path(__file__).resolve().parent
     sys.path.insert(0, str(repo_root))
 
-    data_dir = repo_root / DATA_DIR
+    ensure_build_package(repo_root)
+
+    data_dir = (repo_root / DATA_DIR).resolve()
     data_dir.mkdir(parents=True, exist_ok=True)
 
-    repo = (repo_root / "gesetze").resolve()
-    subprocess.run(["git", "reset", "--hard"], cwd=repo, check=True)
+    gesetze_repo = (repo_root / "gesetze").resolve()
+
+    if not gesetze_repo.exists():
+        print(f"Missing gesetze submodule folder: {gesetze_repo}", file=sys.stderr)
+        return 1
+
+    print("== reset gesetze submodule ==")
+    git_reset_hard(gesetze_repo)
+
+    print()
+    print("== bookler ==")
+    result = run_tool("bookler", [
+        "build/bookler.py",
+        *ROOTS,
+        "--pretty",
+        "-o",
+        BOOKMAP,
+    ])
+
+    if result != 0:
+        return result
 
     write_args: list[str] = []
 
     if WRITE:
         write_args.append("--write")
 
-    bookler_args = [
-        "build/bookler.py",
-        *ROOTS,
-        "--pretty",
-        "-o",
-        BOOKMAP,
-    ]
-    result = run_tool("bookler", bookler_args)
-
-    if result != 0:
-        return result
-
-    decorator_args = [
+    print()
+    print("== decorator ==")
+    result = run_tool("decorator", [
         "build/decorator.py",
         *write_args,
         *ROOTS,
-    ]
-    result = run_tool("decorator", decorator_args)
+    ])
 
     if result != 0:
         return result
 
-    linker_args = [
+    print()
+    print("== linker ==")
+    result = run_tool("linker", [
         "build/linker.py",
         *write_args,
         *ROOTS,
         "--bookmap",
         BOOKMAP,
-    ]
-    result = run_tool("linker", linker_args)
+    ])
 
     if result != 0:
         return result
 
-    indexer_args = [
+    print()
+    print("== indexer ==")
+    result = run_tool("indexer", [
         "build/indexer.py",
         *ROOTS,
         "--out",
         DATA_DIR,
-    ]
-    result = run_tool("indexer", indexer_args)
+    ])
 
     if result != 0:
         return result
+
+    print()
+    print("== lawking build complete ==")
+    print(f"bookmap: {BOOKMAP}")
+    print(f"data:    {DATA_DIR}")
 
     return 0
 
