@@ -14,6 +14,7 @@ const Lawking = (() => {
   const elSearch = () => document.getElementById("search");
   const elSearchStatus = () => document.getElementById("search-status");
   const elKnowledge = () => document.getElementById("knowledge");
+  const elKnowledgePanel = () => document.getElementById("knowledge-panel");
 
   function htmlEscape(s) {
     return String(s)
@@ -119,6 +120,20 @@ const Lawking = (() => {
 
     elBooks().querySelectorAll(".book").forEach(node => {
       node.addEventListener("click", () => openBook(node.dataset.path));
+    });
+  }
+
+
+  function initKnowledgePanel() {
+    const panel = elKnowledgePanel();
+    if (!panel) return;
+
+    const saved = localStorage.getItem("lawking.wissendb.offen");
+    if (saved === "1") panel.open = true;
+    if (saved === "0") panel.open = false;
+
+    panel.addEventListener("toggle", () => {
+      localStorage.setItem("lawking.wissendb.offen", panel.open ? "1" : "0");
     });
   }
 
@@ -901,6 +916,7 @@ const Lawking = (() => {
     books = await loadJson("data/books.json", []);
     knowledge = await loadJson("knowledge.json", []);
     prepareKnowledgeTerms();
+    initKnowledgePanel();
     renderKnowledge();
     searchApi = String(window.LAWKING_SEARCH_API || "").trim();
 

@@ -285,3 +285,39 @@ aside h2 {
   outline: 2px solid #d7b65d;
   outline-offset: 1px;
 }
+
+
+.knowledge-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.knowledge-panel-title {
+  cursor: pointer;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .02em;
+  user-select: none;
+}
+
+.knowledge-panel-title::marker {
+  color: #7d6b4d;
+}
+
+.knowledge-panel #knowledge {
+  padding: 0 12px 12px;
+}
+
+.knowledge-panel:not([open]) #knowledge {
+  display: none;
+}
+
+.knowledge-panel:not([open]) {
+  background: #f4eee4;
+}
+
+.knowledge-panel[open] .knowledge-panel-title {
+  border-bottom: 1px solid #ded5c8;
+  margin-bottom: 6px;
+}
