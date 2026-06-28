@@ -338,9 +338,41 @@ const Lawking = (() => {
     return out.join("\n");
   }
 
+  function normalizeBookPath(path) {
+    let clean = String(path || "").replace(/^\.?\//, "").replace(/\\/g, "/");
+
+    if (!clean) {
+      return "";
+    }
+
+    if (!clean.endsWith("index.md")) {
+      clean = clean.replace(/\/$/, "") + "/index.md";
+    }
+
+    return clean;
+  }
+
   function bookByMarkdownPath(path) {
-    const clean = path.replace(/^\.?\//, "").replace(/\\/g, "/");
-    return books.find(b => b.path === clean || b.markdown === clean);
+    const clean = normalizeBookPath(path);
+    const withoutGesetze = clean.replace(/^gesetze\//, "");
+    const withGesetze = clean.startsWith("gesetze/") ? clean : "gesetze/" + clean;
+
+    return books.find(b => {
+      const bookPath = normalizeBookPath(b.path || b.markdown || "");
+      return bookPath === clean || bookPath === withoutGesetze || bookPath === withGesetze;
+    });
+  }
+
+  function pseudoBookFromPath(path) {
+    const clean = normalizeBookPath(path);
+    const dir = clean.split("/").slice(-2, -1)[0] || clean;
+
+    return {
+      path: clean,
+      title: dir.toUpperCase(),
+      jurabk: dir.toUpperCase(),
+      virtual: true,
+    };
   }
 
   function resolveHref(href) {
@@ -456,15 +488,10 @@ const Lawking = (() => {
   }
 
   async function openBook(path, hash = "", pushRoute = true, scrollTop = null) {
-    const book = bookByMarkdownPath(path) || books.find(b => b.path === path);
-
-    if (!book) {
-      elViewer().innerHTML = `<div class="error">Book not found: <code>${htmlEscape(path)}</code></div>`;
-      return;
-    }
+    const book = bookByMarkdownPath(path) || pseudoBookFromPath(path);
 
     currentBook = book;
-    markActiveBook(book.path);
+    markActiveBook(book.virtual ? "" : book.path);
 
     if (pushRoute) {
       rememberScrollState();
