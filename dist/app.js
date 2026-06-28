@@ -9,7 +9,7 @@ const Lawking = (() => {
   const SEARCH_MIN_CHARS = 3;
   let knowledge = [];
   let knowledgeTerms = [];
-  const ASSET_VERSION = String(window.LAWKING_ASSET_VERSION || "2026-06-28-3").trim();
+  const ASSET_VERSION = String(window.LAWKING_ASSET_VERSION || "2026-06-28-5").trim();
 
   function versionedUrl(path) {
     if (!ASSET_VERSION) return path;
@@ -30,6 +30,22 @@ const Lawking = (() => {
   const elSearchStatus = () => document.getElementById("search-status");
   const elKnowledge = () => document.getElementById("knowledge");
   const elKnowledgePanel = () => document.getElementById("knowledge-panel");
+
+  function spinnerText(text) {
+    return `<span class="spinner" aria-hidden="true"></span><span>${htmlEscape(text)}</span>`;
+  }
+
+  function setSearchStatus(text, spinning = false) {
+    const node = elSearchStatus();
+    if (!node) return;
+
+    node.innerHTML = spinning ? spinnerText(text) : htmlEscape(text);
+    node.classList.toggle("is-loading", spinning);
+  }
+
+  function setViewerLoading(text) {
+    elViewer().innerHTML = `<div class="loading is-loading">${spinnerText(text)}</div>`;
+  }
 
   function htmlEscape(s) {
     return String(s)
@@ -528,7 +544,7 @@ const Lawking = (() => {
       pushBookRoute(book.path, hash);
     }
 
-    elViewer().innerHTML = `<div class="loading">Loading ${htmlEscape(book.title || book.path)}...</div>`;
+    setViewerLoading(`Lade ${book.title || book.path}...`);
 
     try {
       const loaded = await loadText(book.path);
@@ -846,7 +862,7 @@ const Lawking = (() => {
     const total = Number.isFinite(payload.total) ? payload.total : results.length;
     const mode = payload.mode || (parsed.mode === "regex" ? "regex" : parsed.mode === "wildcard" ? "wildcard" : "text");
 
-    elSearchStatus().textContent = `${total} Online-${mode}-Treffer${total > results.length ? `, zeige ${results.length}` : ""}.`;
+    setSearchStatus(`${total} Online-${mode}-Treffer${total > results.length ? `, zeige ${results.length}` : ""}.`);
     renderSearchResults(results.map(item => ({ item })), parsed);
   }
 
@@ -876,36 +892,38 @@ const Lawking = (() => {
     if (!parsed.raw) {
       elResults().innerHTML = "";
       const chunkInfo = searchApi ? "Online-Suche" : `${searchIndex.length} durchsuchbare Abschnitte`;
-      elSearchStatus().textContent = `${books.length} Bücher, ${chunkInfo}.`;
+      setSearchStatus(`${books.length} Bücher, ${chunkInfo}.`);
       return;
     }
 
     if (parsed.raw.length < SEARCH_MIN_CHARS) {
       elResults().innerHTML = "";
-      elSearchStatus().textContent = `Bitte mindestens ${SEARCH_MIN_CHARS} Zeichen eingeben.`;
+      setSearchStatus(`Bitte mindestens ${SEARCH_MIN_CHARS} Zeichen eingeben.`);
       return;
     }
 
     if (parsed.mode === "bad-regex") {
       elResults().innerHTML = "";
-      elSearchStatus().textContent = `Ungültiger regulärer Ausdruck: ${parsed.error}`;
+      setSearchStatus(`Ungültiger regulärer Ausdruck: ${parsed.error}`);
       return;
     }
 
     if (searchApi) {
-      elSearchStatus().textContent = "Suche online...";
+      setSearchStatus("Suche online...", true);
 
       try {
         await searchOnline(parsed, seq);
       } catch (e) {
         if (seq === searchSeq) {
           elResults().innerHTML = "";
-          elSearchStatus().textContent = `Online-Suche fehlgeschlagen: ${e.message}`;
+          setSearchStatus(`Online-Suche fehlgeschlagen: ${e.message}`);
         }
       }
 
       return;
     }
+
+    setSearchStatus("Suche lokal...", true);
 
     const results = [];
 
@@ -924,16 +942,26 @@ const Lawking = (() => {
     const shown = uniqueResults.slice(0, max);
     const mode = parsed.mode === "regex" ? "regex" : parsed.mode === "wildcard" ? "wildcard" : "text";
 
-    elSearchStatus().textContent = `${uniqueResults.length} eindeutige Gesetzbuch-${mode}-Treffer${results.length !== uniqueResults.length ? ` aus ${results.length} Abschnitten` : ""}${uniqueResults.length > max ? `, zeige ${max}` : ""}.`;
+    setSearchStatus(`${uniqueResults.length} eindeutige Gesetzbuch-${mode}-Treffer${results.length !== uniqueResults.length ? ` aus ${results.length} Abschnitten` : ""}${uniqueResults.length > max ? `, zeige ${max}` : ""}.`);
     renderSearchResults(shown, parsed);
   }
 
   function doSearchDebounced(query) {
     clearTimeout(searchTimer);
+
+    const raw = String(query || "").trim();
+
+    if (raw && raw.length >= SEARCH_MIN_CHARS) {
+      setSearchStatus(`Suche startet in ${SEARCH_DELAY_MS} ms...`, true);
+    }
+
     searchTimer = setTimeout(() => doSearchNow(query), SEARCH_DELAY_MS);
   }
 
   async function init() {
+    document.body.classList.add("app-initializing");
+    setViewerLoading("Initialisiere Lawking...");
+    setSearchStatus("Lade Bücher und WissenDB...", true);
     books = await loadJson("data/books.json", []);
     knowledge = await loadJson("knowledge.json", []);
     prepareKnowledgeTerms();
@@ -946,9 +974,11 @@ const Lawking = (() => {
     }
 
     renderBooks();
-    elSearchStatus().textContent = searchApi
+    setSearchStatus(searchApi
       ? `${books.length} Bücher, Online-Suche.`
-      : `${books.length} Bücher, ${searchIndex.length} durchsuchbare Abschnitte.`;
+      : `${books.length} Bücher, ${searchIndex.length} durchsuchbare Abschnitte.`);
+
+    document.body.classList.remove("app-initializing");
 
     elSearch().addEventListener("input", ev => doSearchDebounced(ev.target.value));
 
@@ -979,6 +1009,7 @@ const Lawking = (() => {
       openBook(route.path, route.hash, false);
     } else {
       history.replaceState({ type: "home" }, "", window.location.pathname + window.location.search + window.location.hash);
+      openHome(false);
     }
   }
 

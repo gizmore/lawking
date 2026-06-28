@@ -321,3 +321,46 @@ aside h2 {
   border-bottom: 1px solid #ded5c8;
   margin-bottom: 6px;
 }
+
+
+.spinner {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.15em;
+  margin-right: 0.45em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 999px;
+  animation: lawking-spin 0.787s linear infinite;
+}
+
+.is-loading {
+  color: #5e5448;
+}
+
+.loading.is-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+}
+
+#search-status.is-loading {
+  display: flex;
+  align-items: center;
+}
+
+.app-initializing #viewer {
+  cursor: wait;
+}
+
+@keyframes lawking-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+    border-right-color: currentColor;
+  }
+}
