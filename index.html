@@ -1,42 +1,85 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="utf-8">
-  <title>Lawking</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="dist/app.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>lawking.ink</title>
+  <meta name="description" content="lawking.ink — Gesetzestexte, sauber verlinkt und hackerfreundlich.">
+
+  <!-- Favicons / browser -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#050505">
+
+  <!-- Open Graph: WhatsApp, Matrix, Discord, Slack, Facebook, LinkedIn, etc. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="lawking">
+  <meta property="og:title" content="lawking.ink">
+  <meta property="og:description" content="Gesetzestexte, sauber verlinkt und hackerfreundlich.">
+  <meta property="og:url" content="https://lawking.ink/">
+  <meta property="og:image" content="https://lawking.ink/img/og-image.png">
+  <meta property="og:image:secure_url" content="https://lawking.ink/img/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="lawking logo">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="lawking.ink">
+  <meta name="twitter:description" content="Gesetzestexte, sauber verlinkt und hackerfreundlich.">
+  <meta name="twitter:image" content="https://lawking.ink/img/og-image.png">
+  <meta name="twitter:image:alt" content="lawking logo">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: system-ui, sans-serif;
+      background: #050505;
+      color: #f4f4f4;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    main {
+      padding: 2rem;
+    }
+
+    img {
+      width: 128px;
+      height: 128px;
+      image-rendering: auto;
+    }
+
+    a {
+      color: inherit;
+      text-decoration-thickness: .08em;
+      text-underline-offset: .2em;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <div class="brand" onclick="Lawking.openHome()">lawking</div>
-    <div class="subtitle">offline legal markdown browser</div>
-  </header>
-
   <main>
-    <aside>
-      <section class="sidebar-section search-section">
-        <h2>Search all laws</h2>
-        <input id="search" placeholder="text, wildcard*, or /regex/i — e.g. § 100a stpo" autocomplete="off">
-        <div id="search-status"></div>
-        <div id="results"></div>
-      </section>
-
-      <section class="sidebar-section">
-        <h2>Book tree</h2>
-        <div id="books"></div>
-      </section>
-    </aside>
-
-    <section id="viewer">
-      <div class="welcome">
-        <h1>Lawking</h1>
-        <p>Offline legal Markdown browser with verified links and audit warnings.</p>
-        <p>Search all laws on the left, or open a book from the tree.</p>
-      </div>
-    </section>
+    <img src="/icons/icon-512.png" alt="lawking logo">
+    <h1>lawking.ink</h1>
+    <p><a href="/browser.html">Browser öffnen</a></p>
+    <p>Gesetzestexte, sauber verlinkt und hackerfreundlich.</p>
+    <p>Quelle: https://github.com/bundestag/gesetze</p>
+    <p>Recherchieren Sie in den Büchern mit Querverweisen für maximale Effizienz.</p>
+    <p>Nie wieder Blättern und Blättern!</p>
+    <p>Alles Offline, Preise nur individuell.</p>
+    <p>Für einen Mindestlohnarbeiter schon ab €19,95</p>
   </main>
-
-  <script src="node_modules/marked/marked.min.js"></script>
-  <script src="dist/app.js"></script>
 </body>
 </html>
+
