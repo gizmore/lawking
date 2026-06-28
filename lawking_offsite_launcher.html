@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Lawking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="dist/app.css">
+</head>
+<body>
+  <header>
+    <div class="brand" onclick="Lawking.openHome()">lawking</div>
+    <input id="search" placeholder="Search laws, e.g. § 100a stpo, oops, transplantation..." autocomplete="off">
+  </header>
+
+  <main>
+    <aside>
+      <h2>Books</h2>
+      <div id="books"></div>
+
+      <h2>Search</h2>
+      <div id="results"></div>
+    </aside>
+
+    <section id="viewer">
+      <div class="welcome">
+        <h1>Lawking</h1>
+        <p>Offline legal Markdown browser with verified links and audit warnings.</p>
+        <p>Search above or choose a book.</p>
+      </div>
+    </section>
+  </main>
+  <script src="../node_modules/marked/marked.min.js"></script>
+  <script src="dist/app.js"></script>
+</body>
+</html>
