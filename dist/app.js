@@ -124,18 +124,40 @@ const Lawking = (() => {
     );
   }
 
+  function prepareMarkdownForRenderer(md) {
+    /*
+      Marked/CommonMark can treat raw HTML anchor lines as HTML blocks.
+
+      Bad source shape:
+          <a id="p-234a"></a>
+          a) in den Fällen der [§§ 234a](#p-234a) ...
+
+      Some Markdown renderers then leave the link syntax literal because the
+      following prose is swallowed into the HTML block.
+
+      Fix:
+      - Convert Lawking anchor lines to span anchors.
+      - Surround them with blank lines so the next legal text is parsed as Markdown.
+    */
+    return String(md || "").replace(
+      /^\s*<a\s+id="([^"]+)"><\/a>\s*$/gm,
+      (_match, id) => `\n<span id="${attrEscape(id)}"></span>\n`
+    );
+  }
+
   function markdownToHtml(md) {
     let html;
+    const prepared = prepareMarkdownForRenderer(md);
 
     if (window.marked && window.marked.parse) {
-      html = window.marked.parse(md, {
+      html = window.marked.parse(prepared, {
         gfm: true,
         breaks: false,
         mangle: false,
         headerIds: false,
       });
     } else {
-      html = fallbackMarkdownToHtml(md);
+      html = fallbackMarkdownToHtml(prepared);
     }
 
     return `<div class="markdown">${highlightOops(html)}</div>`;
@@ -236,7 +258,82 @@ const Lawking = (() => {
     });
   }
 
-  async function openBook(path, hash = "") {
+  function routeUrl(path, hash = "") {
+    const url = new URL(window.location.href);
+    url.searchParams.set("book", path);
+
+    if (hash) {
+      url.searchParams.set("anchor", hash);
+    } else {
+      url.searchParams.delete("anchor");
+    }
+
+    return url.pathname + url.search + url.hash;
+  }
+
+  function pushBookRoute(path, hash = "") {
+    const state = {
+      type: "book",
+      path,
+      hash,
+    };
+
+    const next = routeUrl(path, hash);
+    const current = window.location.pathname + window.location.search + window.location.hash;
+
+    if (next !== current) {
+      history.pushState(state, "", next);
+    } else {
+      history.replaceState(state, "", next);
+    }
+  }
+
+  function replaceHomeRoute() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("book");
+    url.searchParams.delete("anchor");
+    history.replaceState({ type: "home" }, "", url.pathname + url.search + url.hash);
+  }
+
+  function readBookRoute() {
+    const url = new URL(window.location.href);
+    const path = url.searchParams.get("book");
+    const hash = url.searchParams.get("anchor") || "";
+
+    if (!path) {
+      return null;
+    }
+
+    return { path, hash };
+  }
+
+  function rememberScrollState() {
+    const state = history.state || {};
+    const nextState = {
+      ...state,
+      scrollTop: elViewer().scrollTop,
+    };
+
+    history.replaceState(
+      nextState,
+      "",
+      window.location.pathname + window.location.search + window.location.hash
+    );
+  }
+
+  function restoreScrollState(scrollTop) {
+    if (typeof scrollTop !== "number") {
+      return false;
+    }
+
+    requestAnimationFrame(() => {
+      elViewer().scrollTop = scrollTop;
+    });
+
+    return true;
+  }
+
+  async function openBook(path, hash = "", pushRoute = true, scrollTop = null) {
     const book = bookByMarkdownPath(path) || books.find(b => b.path === path);
 
     if (!book) {
@@ -246,6 +343,11 @@ const Lawking = (() => {
 
     currentBook = book;
     markActiveBook(book.path);
+
+    if (pushRoute) {
+      rememberScrollState();
+      pushBookRoute(book.path, hash);
+    }
 
     elViewer().innerHTML = `<div class="loading">Loading ${htmlEscape(book.title || book.path)}...</div>`;
 
@@ -257,6 +359,10 @@ const Lawking = (() => {
 
       if (window.LAWKING_LAST_SEARCH) {
         highlightViewer(window.LAWKING_LAST_SEARCH);
+      }
+
+      if (restoreScrollState(scrollTop)) {
+        return;
       }
 
       if (hash) {
@@ -575,11 +681,50 @@ const Lawking = (() => {
     elSearchStatus().textContent = `${books.length} books, ${searchIndex.length} searchable chunks.`;
 
     elSearch().addEventListener("input", ev => doSearchDebounced(ev.target.value));
+
+    let scrollRememberTimer = null;
+    elViewer().addEventListener("scroll", () => {
+      clearTimeout(scrollRememberTimer);
+      scrollRememberTimer = setTimeout(rememberScrollState, 150);
+    });
+
+    window.addEventListener("beforeunload", rememberScrollState);
+
+    window.addEventListener("popstate", ev => {
+      const route = readBookRoute();
+      const scrollTop = ev.state && typeof ev.state.scrollTop === "number"
+        ? ev.state.scrollTop
+        : null;
+
+      if (route) {
+        openBook(route.path, route.hash, false, scrollTop);
+      } else {
+        openHome(false, scrollTop);
+      }
+    });
+
+    const route = readBookRoute();
+
+    if (route) {
+      openBook(route.path, route.hash, false);
+    } else {
+      history.replaceState({ type: "home" }, "", window.location.pathname + window.location.search + window.location.hash);
+    }
   }
 
-  function openHome() {
+  function openHome(pushRoute = true, scrollTop = null) {
     currentBook = null;
     markActiveBook("");
+
+    if (pushRoute) {
+      rememberScrollState();
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete("book");
+      url.searchParams.delete("anchor");
+      history.pushState({ type: "home" }, "", url.pathname + url.search + url.hash);
+    }
+
     elViewer().innerHTML = `
       <div class="welcome">
         <h1>Lawking</h1>
@@ -587,6 +732,10 @@ const Lawking = (() => {
         <p>Search all laws on the left, or open a book from the tree.</p>
       </div>
     `;
+
+    if (!restoreScrollState(scrollTop)) {
+      elViewer().scrollTop = 0;
+    }
   }
 
   return { init, openBook, openHome };
