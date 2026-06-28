@@ -2,4 +2,5 @@ build/*
 !build/indexer.py
 data/*
 *.zip
-
+*.log
+*.pid
