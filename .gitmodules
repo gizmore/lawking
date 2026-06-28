@@ -1,0 +1,3 @@
+[submodule "gesetze"]
+	path = gesetze
+	url = https://github.com/bundestag/gesetze
