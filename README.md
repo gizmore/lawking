@@ -75,3 +75,24 @@ http://127.0.0.1:8765/
 No internet needed.
 No Python needed for users.
 Python is only used at build time.
+
+## Online search mode
+
+Use `browser-online.html` with `search.php` on a PHP-capable web server.
+
+The browser still loads the small `data/books.json` book list, but it does **not** download
+`data/search-index.json`. Search requests go to `search.php?q=...&max=100`, which scans the
+server-side `gesetze/` tree and returns one result per book.
+
+Expected server layout:
+
+```text
+browser-online.html
+dist/app.js
+dist/app.css
+search.php
+data/books.json
+gesetze/<book>/index.md
+```
+
+Offline mode still uses `browser.html` and `data/search-index.json`.

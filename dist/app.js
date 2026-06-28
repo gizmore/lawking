@@ -3,6 +3,8 @@ const Lawking = (() => {
   let searchIndex = [];
   let currentBook = null;
   let searchTimer = null;
+  let searchApi = "";
+  let searchSeq = 0;
 
   const elBooks = () => document.getElementById("books");
   const elResults = () => document.getElementById("results");
@@ -617,41 +619,60 @@ const Lawking = (() => {
     }
   }
 
-  function doSearchNow(query) {
-    const parsed = parseSearchQuery(query);
+  function canonicalBookKey(item) {
+    return String(item.path || item.book || item.title || "")
+      .replace(/^\.\//, "")
+      .replace(/\\/g, "/")
+      .replace(/\/index\.md$/, "")
+      .toLowerCase();
+  }
 
-    window.LAWKING_LAST_SEARCH = parsed;
+  function dedupeBookResults(results) {
+    const seen = new Set();
+    const unique = [];
 
-    if (!parsed.raw) {
-      elResults().innerHTML = "";
-      elSearchStatus().textContent = `${books.length} books, ${searchIndex.length} searchable chunks.`;
-      return;
-    }
+    for (const result of results) {
+      const key = canonicalBookKey(result.item || result);
 
-    if (parsed.mode === "bad-regex") {
-      elResults().innerHTML = "";
-      elSearchStatus().textContent = `Bad regex: ${parsed.error}`;
-      return;
-    }
-
-    const results = [];
-
-    for (const item of searchIndex) {
-      const score = scoreItem(item, parsed);
-
-      if (score > 0) {
-        results.push({ item, score });
+      if (!key || seen.has(key)) {
+        continue;
       }
+
+      seen.add(key);
+      unique.push(result);
     }
 
-    results.sort((a, b) => b.score - a.score);
+    return unique;
+  }
 
-    const max = 100;
-    const shown = results.slice(0, max);
-    const mode = parsed.mode === "regex" ? "regex" : parsed.mode === "wildcard" ? "wildcard" : "text";
+  async function searchOnline(parsed, seq) {
+    const url = new URL(searchApi, window.location.href);
+    url.searchParams.set("q", parsed.raw);
+    url.searchParams.set("max", "100");
 
-    elSearchStatus().textContent = `${results.length} ${mode} results${results.length > max ? `, showing ${max}` : ""}.`;
+    const res = await fetch(url.toString(), {
+      headers: { "Accept": "application/json" },
+    });
 
+    if (!res.ok) {
+      throw new Error(res.status + " " + res.statusText);
+    }
+
+    const payload = await res.json();
+
+    if (seq !== searchSeq) {
+      return;
+    }
+
+    const results = Array.isArray(payload.results) ? payload.results : [];
+    const total = Number.isFinite(payload.total) ? payload.total : results.length;
+    const mode = payload.mode || (parsed.mode === "regex" ? "regex" : parsed.mode === "wildcard" ? "wildcard" : "text");
+
+    elSearchStatus().textContent = `${total} online ${mode} results${total > results.length ? `, showing ${results.length}` : ""}.`;
+    renderSearchResults(results.map(item => ({ item })), parsed);
+  }
+
+  function renderSearchResults(shown, parsed) {
     elResults().innerHTML = shown.map(({ item }) => `
       <div class="result" data-path="${attrEscape(item.path)}" data-anchor="${attrEscape(item.anchor || "")}">
         <div class="title">
@@ -668,6 +689,61 @@ const Lawking = (() => {
     });
   }
 
+  async function doSearchNow(query) {
+    const seq = ++searchSeq;
+    const parsed = parseSearchQuery(query);
+
+    window.LAWKING_LAST_SEARCH = parsed;
+
+    if (!parsed.raw) {
+      elResults().innerHTML = "";
+      const chunkInfo = searchApi ? "online search" : `${searchIndex.length} searchable chunks`;
+      elSearchStatus().textContent = `${books.length} books, ${chunkInfo}.`;
+      return;
+    }
+
+    if (parsed.mode === "bad-regex") {
+      elResults().innerHTML = "";
+      elSearchStatus().textContent = `Bad regex: ${parsed.error}`;
+      return;
+    }
+
+    if (searchApi) {
+      elSearchStatus().textContent = "Searching online...";
+
+      try {
+        await searchOnline(parsed, seq);
+      } catch (e) {
+        if (seq === searchSeq) {
+          elResults().innerHTML = "";
+          elSearchStatus().textContent = `Online search failed: ${e.message}`;
+        }
+      }
+
+      return;
+    }
+
+    const results = [];
+
+    for (const item of searchIndex) {
+      const score = scoreItem(item, parsed);
+
+      if (score > 0) {
+        results.push({ item, score });
+      }
+    }
+
+    results.sort((a, b) => b.score - a.score);
+
+    const uniqueResults = dedupeBookResults(results);
+    const max = 100;
+    const shown = uniqueResults.slice(0, max);
+    const mode = parsed.mode === "regex" ? "regex" : parsed.mode === "wildcard" ? "wildcard" : "text";
+
+    elSearchStatus().textContent = `${uniqueResults.length} unique book ${mode} results${results.length !== uniqueResults.length ? ` from ${results.length} chunks` : ""}${uniqueResults.length > max ? `, showing ${max}` : ""}.`;
+    renderSearchResults(shown, parsed);
+  }
+
   function doSearchDebounced(query) {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => doSearchNow(query), 120);
@@ -675,10 +751,16 @@ const Lawking = (() => {
 
   async function init() {
     books = await loadJson("data/books.json", []);
-    searchIndex = await loadJson("data/search-index.json", []);
+    searchApi = String(window.LAWKING_SEARCH_API || "").trim();
+
+    if (!searchApi) {
+      searchIndex = await loadJson("data/search-index.json", []);
+    }
 
     renderBooks();
-    elSearchStatus().textContent = `${books.length} books, ${searchIndex.length} searchable chunks.`;
+    elSearchStatus().textContent = searchApi
+      ? `${books.length} books, online search.`
+      : `${books.length} books, ${searchIndex.length} searchable chunks.`;
 
     elSearch().addEventListener("input", ev => doSearchDebounced(ev.target.value));
 
