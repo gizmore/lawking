@@ -7,24 +7,25 @@ This software, its source code, generated assets, data files, design, branding,
 logos, text, indexes, search data, and offline packages are the property of the
 copyright holder, unless a file explicitly states otherwise.
 
-Offline Use License
--------------------
-Permission is granted to download, copy, and run an offline version of Lawking for
-personal, private, educational, testing, or internal evaluation use.
+No Free Use / License Required
+------------------------------
+No permission is granted to use, copy, run, modify, redistribute, publish, host,
+mirror, sublicense, sell, rent, integrate, or otherwise exploit Lawking without a
+separate prior license or written permission from the copyright holder.
 
-This permission does not transfer ownership and does not grant any rights beyond
-offline use as described here.
+This also applies to private, personal, educational, testing, internal, and
+offline use. In particular, running an offline copy of Lawking requires a valid
+license or prior written permission from the copyright holder.
 
-You may not, without prior written permission from the copyright holder:
+Without such a license or permission, you may not:
 
-- crawl or copy any generated content.
-- run Lawking locally on your own device;
-- keep a private offline copy;
-- make private backups for your own offline use;
-- use the software to search and read included legal materials.
+- download, copy, install, or run an offline package;
+- keep private backups or copies;
+- use Lawking for private, personal, educational, testing, or internal purposes;
 - sell, rent, sublicense, or commercially exploit Lawking;
 - redistribute Lawking or modified copies of it;
 - publish, host, mirror, or offer Lawking as an online service;
+- crawl, scrape, bulk-copy, or republish generated Lawking content;
 - remove or alter copyright notices, license notices, branding, or disclaimers;
 - claim ownership of Lawking or its assets;
 - use the name, logo, branding, or domain in a confusing or misleading way.
@@ -51,11 +52,14 @@ results, or any consequences of using or relying on Lawking.
 
 Termination
 -----------
-Any permission granted by this license ends automatically if you violate its
-terms. After termination, you must stop using Lawking and delete all copies under
-your control, unless the copyright holder gives written permission otherwise.
+Any permission granted by a separate license or written permission ends
+automatically if you violate its terms. After termination, you must stop using
+Lawking and delete all copies under your control, unless the copyright holder
+gives written permission otherwise.
 
-Commercial or Online License
-----------------------------
-Commercial use, redistribution, hosting, integration into other products, or
-public online use requires a separate written license from the copyright holder.
+Separate License
+----------------
+Any use of Lawking requires a separate written license or prior written
+permission from the copyright holder. This includes private use, offline use,
+commercial use, redistribution, hosting, integration into other products, and
+public online use.
