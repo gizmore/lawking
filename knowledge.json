@@ -1,0 +1,32 @@
+[
+  {
+    "begriff": "Augenzeuge",
+    "erklaerung": "Eine Person, die einen Vorgang selbst mit eigenen Augen wahrgenommen hat und darüber aussagen kann.",
+    "aliases": ["Augenzeugin", "Augenzeugen"]
+  },
+  {
+    "begriff": "Beschuldigter",
+    "erklaerung": "Eine Person, gegen die in einem Strafverfahren ermittelt wird.",
+    "aliases": ["Beschuldigte", "Beschuldigten"]
+  },
+  {
+    "begriff": "Vorsatz",
+    "erklaerung": "Wissen und Wollen der Tatbestandsverwirklichung. Vereinfacht: jemand tut etwas absichtlich oder nimmt es bewusst in Kauf.",
+    "aliases": ["vorsätzlich", "vorsätzliche", "vorsätzlichen"]
+  },
+  {
+    "begriff": "Fahrlässigkeit",
+    "erklaerung": "Außerachtlassen der erforderlichen Sorgfalt. Vereinfacht: jemand passt nicht genug auf, obwohl er es müsste.",
+    "aliases": ["fahrlässig", "fahrlässige", "fahrlässigen"]
+  },
+  {
+    "begriff": "Tatbestand",
+    "erklaerung": "Die gesetzlichen Voraussetzungen, die erfüllt sein müssen, damit eine Rechtsfolge eintreten kann.",
+    "aliases": ["Tatbestands", "Tatbestände"]
+  },
+  {
+    "begriff": "Rechtsfolge",
+    "erklaerung": "Das, was rechtlich passiert, wenn die Voraussetzungen einer Norm erfüllt sind, zum Beispiel Strafe, Anspruch oder Verbot.",
+    "aliases": ["Rechtsfolgen"]
+  }
+]

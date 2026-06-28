@@ -247,3 +247,41 @@ aside h2 {
   border-radius: 3px;
   padding: 0 2px;
 }
+
+
+.knowledge-item {
+  padding: 6px 8px;
+  margin: 4px 0;
+  border-radius: 6px;
+  background: #f4eee4;
+  font-size: 13px;
+}
+
+.knowledge-item summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.knowledge-item div {
+  color: #51483f;
+  margin-top: 5px;
+  line-height: 1.35;
+}
+
+.knowledge-empty {
+  color: #70675c;
+  font-size: 13px;
+}
+
+.knowledge-term {
+  border-bottom: 1px dotted #7d6b4d;
+  background: #fff7dc;
+  cursor: help;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.knowledge-term:focus {
+  outline: 2px solid #d7b65d;
+  outline-offset: 1px;
+}

@@ -5,12 +5,15 @@ const Lawking = (() => {
   let searchTimer = null;
   let searchApi = "";
   let searchSeq = 0;
+  let knowledge = [];
+  let knowledgeTerms = [];
 
   const elBooks = () => document.getElementById("books");
   const elResults = () => document.getElementById("results");
   const elViewer = () => document.getElementById("viewer");
   const elSearch = () => document.getElementById("search");
   const elSearchStatus = () => document.getElementById("search-status");
+  const elKnowledge = () => document.getElementById("knowledge");
 
   function htmlEscape(s) {
     return String(s)
@@ -117,6 +120,123 @@ const Lawking = (() => {
     elBooks().querySelectorAll(".book").forEach(node => {
       node.addEventListener("click", () => openBook(node.dataset.path));
     });
+  }
+
+
+  function renderKnowledge() {
+    const node = elKnowledge();
+
+    if (!node) return;
+
+    if (!knowledge.length) {
+      node.innerHTML = `<div class="knowledge-empty">Noch keine Begriffe.</div>`;
+      return;
+    }
+
+    node.innerHTML = knowledge.map(item => `
+      <details class="knowledge-item">
+        <summary>${htmlEscape(item.begriff || "?")}</summary>
+        <div>${htmlEscape(item.erklaerung || "")}</div>
+      </details>
+    `).join("");
+  }
+
+  function prepareKnowledgeTerms() {
+    const terms = [];
+
+    for (const item of knowledge) {
+      const names = [item.begriff, ...(Array.isArray(item.aliases) ? item.aliases : [])]
+        .map(name => String(name || "").trim())
+        .filter(Boolean);
+
+      for (const name of names) {
+        terms.push({
+          term: name,
+          lower: name.toLocaleLowerCase("de"),
+          title: `${item.begriff}: ${item.erklaerung}`,
+        });
+      }
+    }
+
+    knowledgeTerms = terms.sort((a, b) => b.term.length - a.term.length);
+  }
+
+  function isWordChar(ch) {
+    return !!ch && /[\p{L}\p{N}_]/u.test(ch);
+  }
+
+  function applyKnowledgeTooltips(root) {
+    if (!knowledgeTerms.length || !root) return;
+
+    const rx = new RegExp(knowledgeTerms.map(item => escapeRegex(item.term)).join("|"), "giu");
+    const walker = document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node) {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+
+          if (parent.closest("script, style, code, pre, a, mark, .knowledge-term")) {
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+
+    const nodes = [];
+
+    while (walker.nextNode()) {
+      nodes.push(walker.currentNode);
+    }
+
+    for (const node of nodes) {
+      const text = node.nodeValue;
+      const fragment = document.createDocumentFragment();
+      let last = 0;
+      let changed = false;
+      rx.lastIndex = 0;
+
+      for (const match of text.matchAll(rx)) {
+        const word = match[0];
+        const index = match.index || 0;
+        const before = text[index - 1] || "";
+        const after = text[index + word.length] || "";
+
+        if (isWordChar(before) || isWordChar(after)) {
+          continue;
+        }
+
+        const info = knowledgeTerms.find(item => item.lower === word.toLocaleLowerCase("de"));
+        if (!info) continue;
+
+        if (index > last) {
+          fragment.appendChild(document.createTextNode(text.slice(last, index)));
+        }
+
+        const span = document.createElement("span");
+        span.className = "knowledge-term";
+        span.tabIndex = 0;
+        span.title = info.title;
+        span.textContent = word;
+        fragment.appendChild(span);
+
+        last = index + word.length;
+        changed = true;
+      }
+
+      if (!changed) continue;
+
+      if (last < text.length) {
+        fragment.appendChild(document.createTextNode(text.slice(last)));
+      }
+
+      node.parentNode.replaceChild(fragment, node);
+    }
   }
 
   function highlightOops(html) {
@@ -358,6 +478,7 @@ const Lawking = (() => {
       book.loadedPath = loaded.path;
       elViewer().innerHTML = markdownToHtml(loaded.text);
       wireViewerLinks();
+      applyKnowledgeTooltips(elViewer());
 
       if (window.LAWKING_LAST_SEARCH) {
         highlightViewer(window.LAWKING_LAST_SEARCH);
@@ -668,7 +789,7 @@ const Lawking = (() => {
     const total = Number.isFinite(payload.total) ? payload.total : results.length;
     const mode = payload.mode || (parsed.mode === "regex" ? "regex" : parsed.mode === "wildcard" ? "wildcard" : "text");
 
-    elSearchStatus().textContent = `${total} online ${mode} results${total > results.length ? `, showing ${results.length}` : ""}.`;
+    elSearchStatus().textContent = `${total} Online-${mode}-Treffer${total > results.length ? `, zeige ${results.length}` : ""}.`;
     renderSearchResults(results.map(item => ({ item })), parsed);
   }
 
@@ -697,26 +818,26 @@ const Lawking = (() => {
 
     if (!parsed.raw) {
       elResults().innerHTML = "";
-      const chunkInfo = searchApi ? "online search" : `${searchIndex.length} searchable chunks`;
-      elSearchStatus().textContent = `${books.length} books, ${chunkInfo}.`;
+      const chunkInfo = searchApi ? "Online-Suche" : `${searchIndex.length} durchsuchbare Abschnitte`;
+      elSearchStatus().textContent = `${books.length} Bücher, ${chunkInfo}.`;
       return;
     }
 
     if (parsed.mode === "bad-regex") {
       elResults().innerHTML = "";
-      elSearchStatus().textContent = `Bad regex: ${parsed.error}`;
+      elSearchStatus().textContent = `Ungültiger regulärer Ausdruck: ${parsed.error}`;
       return;
     }
 
     if (searchApi) {
-      elSearchStatus().textContent = "Searching online...";
+      elSearchStatus().textContent = "Suche online...";
 
       try {
         await searchOnline(parsed, seq);
       } catch (e) {
         if (seq === searchSeq) {
           elResults().innerHTML = "";
-          elSearchStatus().textContent = `Online search failed: ${e.message}`;
+          elSearchStatus().textContent = `Online-Suche fehlgeschlagen: ${e.message}`;
         }
       }
 
@@ -740,7 +861,7 @@ const Lawking = (() => {
     const shown = uniqueResults.slice(0, max);
     const mode = parsed.mode === "regex" ? "regex" : parsed.mode === "wildcard" ? "wildcard" : "text";
 
-    elSearchStatus().textContent = `${uniqueResults.length} unique book ${mode} results${results.length !== uniqueResults.length ? ` from ${results.length} chunks` : ""}${uniqueResults.length > max ? `, showing ${max}` : ""}.`;
+    elSearchStatus().textContent = `${uniqueResults.length} eindeutige Gesetzbuch-${mode}-Treffer${results.length !== uniqueResults.length ? ` aus ${results.length} Abschnitten` : ""}${uniqueResults.length > max ? `, zeige ${max}` : ""}.`;
     renderSearchResults(shown, parsed);
   }
 
@@ -751,6 +872,9 @@ const Lawking = (() => {
 
   async function init() {
     books = await loadJson("data/books.json", []);
+    knowledge = await loadJson("knowledge.json", []);
+    prepareKnowledgeTerms();
+    renderKnowledge();
     searchApi = String(window.LAWKING_SEARCH_API || "").trim();
 
     if (!searchApi) {
@@ -759,8 +883,8 @@ const Lawking = (() => {
 
     renderBooks();
     elSearchStatus().textContent = searchApi
-      ? `${books.length} books, online search.`
-      : `${books.length} books, ${searchIndex.length} searchable chunks.`;
+      ? `${books.length} Bücher, Online-Suche.`
+      : `${books.length} Bücher, ${searchIndex.length} durchsuchbare Abschnitte.`;
 
     elSearch().addEventListener("input", ev => doSearchDebounced(ev.target.value));
 
@@ -810,8 +934,8 @@ const Lawking = (() => {
     elViewer().innerHTML = `
       <div class="welcome">
         <h1>Lawking</h1>
-        <p>Offline legal Markdown browser with verified links and audit warnings.</p>
-        <p>Search all laws on the left, or open a book from the tree.</p>
+        <p>Deutscher Gesetzesbrowser mit geprüften Links, Suchfunktion und Wissens-Hinweisen.</p>
+        <p>Links suchen oder ein Gesetzbuch öffnen.</p>
       </div>
     `;
 

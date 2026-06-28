@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="utf-8">
   <title>Lawking</title>
@@ -9,23 +9,34 @@
 <body>
   <header>
     <div class="brand" onclick="Lawking.openHome()">lawking</div>
-    <input id="search" placeholder="Search laws, e.g. § 100a stpo, oops, transplantation..." autocomplete="off">
+    <div class="subtitle">deutscher Gesetzesbrowser</div>
   </header>
 
   <main>
     <aside>
-      <h2>Books</h2>
-      <div id="books"></div>
+      <section class="sidebar-section search-section">
+        <h2>Gesetze durchsuchen</h2>
+        <input id="search" placeholder="Text, Wildcard* oder /regex/i — z.B. § 100a stpo" autocomplete="off">
+        <div id="search-status"></div>
+        <div id="results"></div>
+      </section>
 
-      <h2>Search</h2>
-      <div id="results"></div>
+      <section class="sidebar-section">
+        <h2>Wissen</h2>
+        <div id="knowledge"></div>
+      </section>
+
+      <section class="sidebar-section">
+        <h2>Gesetzbücher</h2>
+        <div id="books"></div>
+      </section>
     </aside>
 
     <section id="viewer">
       <div class="welcome">
         <h1>Lawking</h1>
-        <p>Offline legal Markdown browser with verified links and audit warnings.</p>
-        <p>Search above or choose a book.</p>
+        <p>Deutscher Gesetzesbrowser mit geprüften Links, Suchfunktion und Wissens-Hinweisen.</p>
+        <p>Links suchen oder ein Gesetzbuch öffnen.</p>
       </div>
     </section>
   </main>

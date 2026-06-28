@@ -1,39 +1,33 @@
 # Lawking
 
-A first person lawyer simulation in go and plain html/Markdawn,
+Erster Prototyp für einen deutschen Gesetzesbrowser in schlichtem HTML/JavaScript.
 
+Die Anwendung ist deutsch-only.
 
-# lawking offline browser prototype
+## Modi
 
-This is a tiny offline law browser.
+- `browser.html`: Offline-Modus. Lädt `data/books.json` und `data/search-index.json` im Browser.
+- `browser-online.html`: Online-Modus. Lädt nur `data/books.json`; die Suche läuft über `search.php` auf dem Server.
 
-It serves static files from a local folder and opens the browser.
+## Daten bauen
 
-It searches across multiple files with an indexed tree or smth.
-
-
-## Build data
-
-Assume your (patched?;)) law tree is at `./gesetze`.
-
-You can get this from the [brd](https://github.com/bundestag/gesetze).
+Der Gesetzesbaum liegt lokal unter `./gesetze`.
 
 ```bash
 mkdir -p data
 python3 indexer.py ./gesetze --out data
 ```
 
-The browser expects paths in `books.json` to match actual files.
+Die Pfade in `data/books.json` müssen zu den ausgelieferten Dateien passen.
 
-The simplest layout is to run `indexer.py` with the same root that is served.
+Ein einfaches Layout:
 
-Example distribution layout:
-
-```txt
+```text
 lawking/
+  browser.html
+  browser-online.html
+  search.php
   dist/
-    lawking
-    index.html
     app.js
     app.css
   data/
@@ -46,53 +40,48 @@ lawking/
     ...
 ```
 
-For that layout, build:
+## Online-Suche
 
-```bash
-git clone --recursive https://github.com/gizmore/lawking
-cd lawking
-python3 build/indexer.py ./gesetze --out data
+`browser-online.html` setzt:
+
+```html
+<script>window.LAWKING_SEARCH_API = "search.php";</script>
 ```
 
-## Build launcher
-
-```bash
-go build -o lawking ./build/lawking.go
-```
-
-## Run
-
-```bash
-./lawking
-```
-
-Then browser opens:
-
-```txt
-http://127.0.0.1:8765/
-```
-
-No internet needed.
-No Python needed for users.
-Python is only used at build time.
-
-## Online search mode
-
-Use `browser-online.html` with `search.php` on a PHP-capable web server.
-
-The browser still loads the small `data/books.json` book list, but it does **not** download
-`data/search-index.json`. Search requests go to `search.php?q=...&max=100`, which scans the
-server-side `gesetze/` tree and returns one result per book.
-
-Expected server layout:
+Dadurch wird `data/search-index.json` nicht im Browser geladen. Suchanfragen gehen an:
 
 ```text
-browser-online.html
-dist/app.js
-dist/app.css
-search.php
-data/books.json
-gesetze/<book>/index.md
+search.php?q=...&max=100
 ```
 
-Offline mode still uses `browser.html` and `data/search-index.json`.
+`search.php` durchsucht den serverseitigen `gesetze/`-Baum und liefert kleine JSON-Treffer zurück.
+
+## Wissens-Hinweise / Tooltips
+
+Begriffe für Hover-Hinweise liegen in `knowledge.json`.
+
+Format:
+
+```json
+{
+  "begriff": "Augenzeuge",
+  "erklaerung": "Kurze deutsche Erklärung.",
+  "aliases": ["Augenzeugin", "Augenzeugen"]
+}
+```
+
+Beim Öffnen eines Gesetzbuchs werden passende Begriffe im Text markiert. Der Hinweis erscheint per Hover oder Tastaturfokus.
+
+## Start
+
+Offline lokal zum Testen zum Beispiel:
+
+```bash
+python3 -m http.server 8765
+```
+
+Dann öffnen:
+
+```text
+http://127.0.0.1:8765/browser.html
+```
