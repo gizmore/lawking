@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2026 chappy and gizmore. all rights reserved
+# Copyright (c) 2026 gizmore. All rights reserved.
 """
 doit.py
 

@@ -9,7 +9,7 @@ const Lawking = (() => {
   const SEARCH_MIN_CHARS = 3;
   let knowledge = [];
   let knowledgeTerms = [];
-  const ASSET_VERSION = String(window.LAWKING_ASSET_VERSION || "2026-06-28-8").trim();
+  const ASSET_VERSION = String(window.LAWKING_ASSET_VERSION || "2026-06-28-9").trim();
 
   function versionedUrl(path) {
     if (!ASSET_VERSION) return path;
@@ -606,6 +606,12 @@ const Lawking = (() => {
     return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
+  function stableRegexFlags(flags) {
+    const wanted = new Set(String(flags || "").replace(/[gy]/g, ""));
+    wanted.add("i");
+    return [...wanted].join("");
+  }
+
   function parseSearchQuery(raw) {
     const query = String(raw || "").trim();
 
@@ -626,7 +632,7 @@ const Lawking = (() => {
 
     if (regexMatch) {
       try {
-        const flags = regexMatch[2].includes("i") ? regexMatch[2] : regexMatch[2] + "i";
+        const flags = stableRegexFlags(regexMatch[2]);
         return {
           raw: query,
           normalized: normalize(query),

@@ -77,7 +77,7 @@ Beim Öffnen eines Gesetzbuchs werden passende Begriffe im Text markiert. Der Hi
 Die statischen Dateien werden mit einer Versionskennung ausgeliefert:
 
 ```text
-?v=2026-06-28-8
+?v=2026-06-28-9
 ```
 
 Die Kennung steht zusätzlich in `ASSET_VERSION`. Bei einem Release nur diese Version in den HTML-Dateien und in `dist/app.js` erhöhen. Dadurch laden Browser neue CSS/JS/Icon/JSON/Markdown-Dateien statt alter Cache-Versionen.
@@ -111,23 +111,23 @@ Die Erklärungen sind kurze Orientierungstexte für Tooltips und ersetzen keine 
 
 `index.html` zeigt nun eine deutschsprachige Spruchliste und oben daraus zufällig einen Spruch als Blickfang. Die Sprüche stehen direkt in der Startseite, damit keine extra Datei geladen werden muss.
 
-Asset-Version: `2026-06-28-8`.
+Asset-Version: `2026-06-28-9`.
 
-## Update 2026-06-28-8
+## Update 2026-06-28-9
 
 - Suche startet erst ab 3 Zeichen.
 - Suche wird mit 787 ms Verzögerung entprellt.
 - WissenDB ergänzt: Hochverrat, Gefährdung, demokratisch, Rechtsstaat.
 
 
-## Änderung 2026-06-28-8
+## Änderung 2026-06-28-9
 
 - Spinner/Ladeanzeige beim Initialisieren.
 - Spinner beim verzögerten Suchen und während der Online-/Offline-Suche.
 - Spinner beim Laden eines Gesetzbuchs.
-- Asset-Version auf `2026-06-28-8` erhöht.
+- Asset-Version auf `2026-06-28-9` erhöht.
 
-## Änderung 2026-06-28-8
+## Änderung 2026-06-28-9
 
 Offline-Starter für alle großen Desktop-Systeme ergänzt/aktualisiert:
 
@@ -139,11 +139,20 @@ Die Starter starten zuerst einen lokalen HTTP-Server auf `127.0.0.1:8765`, prüf
 
 Damit läuft die Offline-Version zuverlässig über HTTP statt direkt über `file://`, weil Browser lokale `fetch()`-Zugriffe sonst blockieren können.
 
-Asset-Version auf `2026-06-28-8` erhöht.
+Asset-Version auf `2026-06-28-9` erhöht.
 
-## Änderung 2026-06-28-8 Sync
+## Änderung 2026-06-28-9 Sync
 
 - Lizenztext verschärft: keine freie private/offline Nutzung; jede Nutzung benötigt eine Lizenz oder schriftliche Erlaubnis.
 - Offsite-Launcher an aktuelle Browser-Oberfläche/WissenDB angepasst.
-- Asset-Version auf `2026-06-28-8` erhöht.
+- Asset-Version auf `2026-06-28-9` erhöht.
 - Build-Skripte und `.gitignore` unverändert aus dem gelieferten Archiv übernommen.
+
+## Änderung 2026-06-28-9 Feinschliff
+
+- Manueller Alias ergänzt: `Viehverkehrsverordnung` → `viehverkv_2007`.
+- Manueller Alias geprüft: `Berufsqualifikationsfeststellungsgesetz` → `bqfg` ist vorhanden.
+- Copyright-Hinweise in Build-/Hilfsskripten auf gizmore vereinheitlicht.
+- Browser-Regex-Suche robuster gemacht: statusbehaftete Flags `g`/`y` werden für Suchtests entfernt, damit Treffer nicht durch `lastIndex` flackern.
+- Windows-Offline-Starter robuster gemacht: bestehender Port wird erkannt; Python-Aufruf und Log-Umleitung sind sauberer gequotet.
+- Asset-Version auf `2026-06-28-9` erhöht.
