@@ -9,7 +9,7 @@ const Lawking = (() => {
   const SEARCH_MIN_CHARS = 3;
   let knowledge = [];
   let knowledgeTerms = [];
-  const ASSET_VERSION = String(window.LAWKING_ASSET_VERSION || "2026-06-28-5").trim();
+  const ASSET_VERSION = String(window.LAWKING_ASSET_VERSION || "2026-06-28-7").trim();
 
   function versionedUrl(path) {
     if (!ASSET_VERSION) return path;
