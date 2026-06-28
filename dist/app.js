@@ -2,11 +2,13 @@ const Lawking = (() => {
   let books = [];
   let searchIndex = [];
   let currentBook = null;
+  let searchTimer = null;
 
   const elBooks = () => document.getElementById("books");
   const elResults = () => document.getElementById("results");
   const elViewer = () => document.getElementById("viewer");
   const elSearch = () => document.getElementById("search");
+  const elSearchStatus = () => document.getElementById("search-status");
 
   function htmlEscape(s) {
     return String(s)
@@ -39,60 +41,132 @@ const Lawking = (() => {
     }
   }
 
+  function candidateMarkdownPaths(path) {
+    const clean = String(path || "").replace(/^\.\//, "").replace(/\\/g, "/");
+    const candidates = [];
+
+    function add(value) {
+      if (value && !candidates.includes(value)) {
+        candidates.push(value);
+      }
+    }
+
+    add(clean);
+
+    if (!clean.startsWith("gesetze/")) {
+      add("gesetze/" + clean);
+    }
+
+    if (clean.startsWith("gesetze/")) {
+      add(clean.slice("gesetze/".length));
+    }
+
+    return candidates;
+  }
+
   async function loadText(path) {
-    const res = await fetch(path);
-    if (!res.ok) throw new Error(res.status + " " + path);
-    return await res.text();
+    const tried = [];
+
+    for (const candidate of candidateMarkdownPaths(path)) {
+      tried.push(candidate);
+
+      const res = await fetch(candidate);
+
+      if (res.ok) {
+        return {
+          text: await res.text(),
+          path: candidate,
+        };
+      }
+    }
+
+    throw new Error("404 " + tried.join(" | "));
+  }
+
+  function shortBookTitle(book) {
+    return book.jurabk || book.slug || book.origslug || book.title || book.path;
   }
 
   function renderBooks() {
-    elBooks().innerHTML = books.map(book => `
-      <div class="book" data-path="${attrEscape(book.path)}">
-        <span class="abbr">${htmlEscape(book.jurabk || book.slug || "")}</span>
-        <span>${htmlEscape(book.title || book.path)}</span>
-      </div>
-    `).join("");
+    const grouped = new Map();
+
+    for (const book of books) {
+      const key = (book.id || book.path || "?").charAt(0).toLowerCase();
+      if (!grouped.has(key)) grouped.set(key, []);
+      grouped.get(key).push(book);
+    }
+
+    const letters = Array.from(grouped.keys()).sort();
+
+    elBooks().innerHTML = letters.map(letter => {
+      const items = grouped.get(letter)
+        .sort((a, b) => shortBookTitle(a).localeCompare(shortBookTitle(b), "de"))
+        .map(book => `
+          <div class="book" data-path="${attrEscape(book.path)}">
+            <span class="abbr">${htmlEscape(shortBookTitle(book))}</span>
+            <span>${htmlEscape(book.title || "")}</span>
+            <span class="path">${htmlEscape(book.id || book.path)}</span>
+          </div>
+        `).join("");
+
+      return `<div class="book-letter">${htmlEscape(letter)}</div>${items}`;
+    }).join("");
 
     elBooks().querySelectorAll(".book").forEach(node => {
       node.addEventListener("click", () => openBook(node.dataset.path));
     });
   }
 
-function markdownToHtml(md) {
-  const html = marked.parse(md, {
-    gfm: true,
-    breaks: false,
-  });
+  function highlightOops(html) {
+    return html.replace(
+      /\(Oops, ([^)]+)\)/g,
+      '<span class="oops">(Oops, $1)</span>'
+    );
+  }
 
-  return `<div class="markdown">${highlightOops(html)}</div>`;
-}
+  function markdownToHtml(md) {
+    let html;
 
-function highlightOops(html) {
-  return html.replace(
-    /\(Oops, ([^)]+)\)/g,
-    '<span class="oops">(Oops, $1)</span>'
-  );
-}
+    if (window.marked && window.marked.parse) {
+      html = window.marked.parse(md, {
+        gfm: true,
+        breaks: false,
+        mangle: false,
+        headerIds: false,
+      });
+    } else {
+      html = fallbackMarkdownToHtml(md);
+    }
+
+    return `<div class="markdown">${highlightOops(html)}</div>`;
+  }
+
+  function fallbackMarkdownToHtml(md) {
+    const lines = md.split(/\r?\n/);
+    let out = [];
+    let paragraph = [];
+
+    function inlineMarkdown(text) {
+      let escaped = htmlEscape(text);
+
+      escaped = escaped.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        (_m, label, href) => `<a href="${attrEscape(href)}">${label}</a>`
+      );
+
+      escaped = escaped.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      escaped = escaped.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+      return escaped;
+    }
+
     function flushParagraph() {
       if (!paragraph.length) return;
-      const text = paragraph.join("\n");
-      out.push(`<p>${inlineMarkdown(text)}</p>`);
+      out.push(`<p>${inlineMarkdown(paragraph.join("\n"))}</p>`);
       paragraph = [];
     }
 
     for (const line of lines) {
-      if (line.startsWith("```") || line.startsWith("~~~")) {
-        flushParagraph();
-        inCode = !inCode;
-        out.push(inCode ? "<pre><code>" : "</code></pre>");
-        continue;
-      }
-
-      if (inCode) {
-        out.push(htmlEscape(line) + "\n");
-        continue;
-      }
-
       const anchor = line.match(/^\s*<a\s+id="([^"]+)"><\/a>\s*$/);
       if (anchor) {
         flushParagraph();
@@ -117,26 +191,7 @@ function highlightOops(html) {
     }
 
     flushParagraph();
-    return `<div class="markdown">${out.join("\n")}</div>`;
-  }
-
-  function inlineMarkdown(text) {
-    let escaped = htmlEscape(text);
-
-    escaped = escaped.replace(
-      /\[([^\]]+)\]\(([^)]+)\)/g,
-      (_m, label, href) => `<a href="${attrEscape(href)}">${label}</a>`
-    );
-
-    escaped = escaped.replace(
-      /\(Oops, ([^)]+)\)/g,
-      '<span class="oops">(Oops, $1)</span>'
-    );
-
-    escaped = escaped.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-    escaped = escaped.replace(/`([^`]+)`/g, "<code>$1</code>");
-
-    return escaped;
+    return out.join("\n");
   }
 
   function bookByMarkdownPath(path) {
@@ -155,7 +210,8 @@ function highlightOops(html) {
     }
 
     const [rawPath, rawHash] = href.split("#");
-    const currentDir = currentBook.path.split("/").slice(0, -1).join("/");
+    const currentPath = currentBook.loadedPath || currentBook.path;
+    const currentDir = currentPath.split("/").slice(0, -1).join("/");
     const parts = (currentDir + "/" + rawPath).split("/");
     const normalized = [];
 
@@ -174,23 +230,42 @@ function highlightOops(html) {
     return { path, hash: rawHash || "" };
   }
 
+  function markActiveBook(path) {
+    elBooks().querySelectorAll(".book").forEach(node => {
+      node.classList.toggle("active", node.dataset.path === path);
+    });
+  }
+
   async function openBook(path, hash = "") {
     const book = bookByMarkdownPath(path) || books.find(b => b.path === path);
 
     if (!book) {
-      elViewer().innerHTML = `<p>Book not found: <code>${htmlEscape(path)}</code></p>`;
+      elViewer().innerHTML = `<div class="error">Book not found: <code>${htmlEscape(path)}</code></div>`;
       return;
     }
 
     currentBook = book;
-    const md = await loadText(book.path);
-    elViewer().innerHTML = markdownToHtml(md);
-    wireViewerLinks();
+    markActiveBook(book.path);
 
-    if (hash) {
-      scrollToHash(hash);
-    } else {
-      elViewer().scrollTop = 0;
+    elViewer().innerHTML = `<div class="loading">Loading ${htmlEscape(book.title || book.path)}...</div>`;
+
+    try {
+      const loaded = await loadText(book.path);
+      book.loadedPath = loaded.path;
+      elViewer().innerHTML = markdownToHtml(loaded.text);
+      wireViewerLinks();
+
+      if (window.LAWKING_LAST_SEARCH) {
+        highlightViewer(window.LAWKING_LAST_SEARCH);
+      }
+
+      if (hash) {
+        scrollToHash(hash);
+      } else {
+        elViewer().scrollTop = 0;
+      }
+    } catch (e) {
+      elViewer().innerHTML = `<div class="error">Could not load <code>${htmlEscape(book.path)}</code><br>${htmlEscape(e.message)}</div>`;
     }
   }
 
@@ -225,30 +300,238 @@ function highlightOops(html) {
     setTimeout(() => target.classList.remove("anchor-target"), 1800);
   }
 
-  function doSearch(query) {
-    const q = normalize(query);
+  function escapeRegex(s) {
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
 
-    if (!q) {
+  function parseSearchQuery(raw) {
+    const query = String(raw || "").trim();
+
+    if (!query) {
+      return {
+        raw: "",
+        normalized: "",
+        terms: [],
+        regex: null,
+        mode: "empty",
+      };
+    }
+
+    // Regex mode:
+    //   /straf.*ordnung/i
+    //   /§\s*100a/
+    const regexMatch = query.match(/^\/(.+)\/([dgimsuvy]*)$/);
+
+    if (regexMatch) {
+      try {
+        const flags = regexMatch[2].includes("i") ? regexMatch[2] : regexMatch[2] + "i";
+        return {
+          raw: query,
+          normalized: normalize(query),
+          terms: [],
+          regex: new RegExp(regexMatch[1], flags),
+          mode: "regex",
+        };
+      } catch (e) {
+        return {
+          raw: query,
+          normalized: normalize(query),
+          terms: [],
+          regex: null,
+          mode: "bad-regex",
+          error: e.message,
+        };
+      }
+    }
+
+    // Wildcard mode:
+    //   straf*ordnung
+    //   § 100a * strafprozessordnung
+    if (query.includes("*")) {
+      const pattern = query
+        .split(/\s+/)
+        .map(part => escapeRegex(part).replaceAll("\\*", ".*"))
+        .join(".*");
+
+      return {
+        raw: query,
+        normalized: normalize(query.replaceAll("*", " ")),
+        terms: normalize(query.replaceAll("*", " ")).split(" ").filter(Boolean),
+        regex: new RegExp(pattern, "i"),
+        mode: "wildcard",
+      };
+    }
+
+    const normalized = normalize(query);
+
+    return {
+      raw: query,
+      normalized,
+      terms: normalized.split(" ").filter(Boolean),
+      regex: null,
+      mode: "terms",
+    };
+  }
+
+  function itemHaystack(item) {
+    return [
+      item.book,
+      item.jurabk,
+      item.title,
+      item.text,
+      item.snippet,
+      item.path,
+      item.anchor,
+      item.search,
+    ].join(" ");
+  }
+
+  function scoreItem(item, parsed) {
+    const rawHay = itemHaystack(item);
+    const hay = item.search || normalize(rawHay);
+
+    if (parsed.regex) {
+      const ok = parsed.regex.test(rawHay) || parsed.regex.test(hay);
+
+      if (!ok) return 0;
+
+      let score = 5;
+
+      if (parsed.regex.test(item.jurabk || "")) score += 8;
+      if (parsed.regex.test(item.book || "")) score += 4;
+      if (parsed.regex.test(item.title || "")) score += 3;
+
+      return score;
+    }
+
+    let score = 0;
+
+    for (const term of parsed.terms) {
+      if (!hay.includes(term)) {
+        return 0;
+      }
+
+      score += 1;
+
+      if ((item.jurabk || "").toLowerCase() === term) score += 8;
+      if (normalize(item.book || "").includes(term)) score += 3;
+      if (normalize(item.title || "").includes(term)) score += 2;
+      if (normalize(item.path || "").includes(term)) score += 1;
+    }
+
+    if ((item.anchor || "").includes(parsed.terms.join("-"))) score += 4;
+
+    return score;
+  }
+
+  function highlightText(text, parsed) {
+    const original = String(text || "");
+
+    if (!original) return "";
+
+    let escaped = htmlEscape(original);
+
+    if (parsed.regex) {
+      try {
+        const flags = parsed.regex.flags.includes("g") ? parsed.regex.flags : parsed.regex.flags + "g";
+        const rx = new RegExp(parsed.regex.source, flags);
+        return escaped.replace(rx, match => `<mark>${match}</mark>`);
+      } catch (_e) {
+        return escaped;
+      }
+    }
+
+    const terms = [...parsed.terms]
+      .filter(term => term.length >= 2 || term === "§")
+      .sort((a, b) => b.length - a.length);
+
+    if (!terms.length) return escaped;
+
+    const rx = new RegExp("(" + terms.map(escapeRegex).join("|") + ")", "gi");
+    return escaped.replace(rx, "<mark>$1</mark>");
+  }
+
+  function highlightViewer(parsed) {
+    if (!parsed || parsed.mode === "empty" || parsed.mode === "bad-regex") return;
+
+    const root = elViewer().querySelector(".markdown");
+
+    if (!root) return;
+
+    const walker = document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node) {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          if (node.parentElement && ["SCRIPT", "STYLE", "CODE", "PRE", "A", "MARK"].includes(node.parentElement.tagName)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+
+    const nodes = [];
+
+    while (walker.nextNode()) {
+      nodes.push(walker.currentNode);
+    }
+
+    for (const node of nodes) {
+      const text = node.nodeValue;
+      let html = null;
+
+      if (parsed.regex) {
+        try {
+          const flags = parsed.regex.flags.includes("g") ? parsed.regex.flags : parsed.regex.flags + "g";
+          const rx = new RegExp(parsed.regex.source, flags);
+          if (!rx.test(text)) continue;
+          html = htmlEscape(text).replace(rx, match => `<mark>${htmlEscape(match)}</mark>`);
+        } catch (_e) {
+          continue;
+        }
+      } else {
+        const terms = [...parsed.terms]
+          .filter(term => term.length >= 2 || term === "§")
+          .sort((a, b) => b.length - a.length);
+
+        if (!terms.length) continue;
+
+        const rx = new RegExp("(" + terms.map(escapeRegex).join("|") + ")", "gi");
+
+        if (!rx.test(text)) continue;
+
+        html = htmlEscape(text).replace(rx, "<mark>$1</mark>");
+      }
+
+      const span = document.createElement("span");
+      span.innerHTML = html;
+      node.parentNode.replaceChild(span, node);
+    }
+  }
+
+  function doSearchNow(query) {
+    const parsed = parseSearchQuery(query);
+
+    window.LAWKING_LAST_SEARCH = parsed;
+
+    if (!parsed.raw) {
       elResults().innerHTML = "";
+      elSearchStatus().textContent = `${books.length} books, ${searchIndex.length} searchable chunks.`;
       return;
     }
 
-    const terms = q.split(" ").filter(Boolean);
+    if (parsed.mode === "bad-regex") {
+      elResults().innerHTML = "";
+      elSearchStatus().textContent = `Bad regex: ${parsed.error}`;
+      return;
+    }
+
     const results = [];
 
     for (const item of searchIndex) {
-      const hay = item.search || normalize([
-        item.book,
-        item.jurabk,
-        item.title,
-        item.text,
-      ].join(" "));
-
-      let score = 0;
-
-      for (const term of terms) {
-        if (hay.includes(term)) score += 1;
-      }
+      const score = scoreItem(item, parsed);
 
       if (score > 0) {
         results.push({ item, score });
@@ -257,13 +540,20 @@ function highlightOops(html) {
 
     results.sort((a, b) => b.score - a.score);
 
-    elResults().innerHTML = results.slice(0, 80).map(({ item }) => `
+    const max = 100;
+    const shown = results.slice(0, max);
+    const mode = parsed.mode === "regex" ? "regex" : parsed.mode === "wildcard" ? "wildcard" : "text";
+
+    elSearchStatus().textContent = `${results.length} ${mode} results${results.length > max ? `, showing ${max}` : ""}.`;
+
+    elResults().innerHTML = shown.map(({ item }) => `
       <div class="result" data-path="${attrEscape(item.path)}" data-anchor="${attrEscape(item.anchor || "")}">
         <div class="title">
-          <span class="abbr">${htmlEscape(item.jurabk || "")}</span>
-          ${htmlEscape(item.title || item.path)}
+          <span class="abbr">${highlightText(item.jurabk || "", parsed)}</span>
+          ${highlightText(item.title || item.book || item.path, parsed)}
         </div>
-        <div class="snippet">${htmlEscape(item.snippet || "")}</div>
+        <div class="snippet">${highlightText(item.snippet || "", parsed)}</div>
+        <div class="meta">${htmlEscape(item.path)}${item.anchor ? " #" + htmlEscape(item.anchor) : ""}</div>
       </div>
     `).join("");
 
@@ -272,26 +562,29 @@ function highlightOops(html) {
     });
   }
 
+  function doSearchDebounced(query) {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => doSearchNow(query), 120);
+  }
+
   async function init() {
     books = await loadJson("data/books.json", []);
     searchIndex = await loadJson("data/search-index.json", []);
+
     renderBooks();
+    elSearchStatus().textContent = `${books.length} books, ${searchIndex.length} searchable chunks.`;
 
-    elSearch().addEventListener("input", ev => doSearch(ev.target.value));
-
-    const first = books[0];
-    if (first) {
-      // keep welcome page; user can click
-    }
+    elSearch().addEventListener("input", ev => doSearchDebounced(ev.target.value));
   }
 
   function openHome() {
     currentBook = null;
+    markActiveBook("");
     elViewer().innerHTML = `
       <div class="welcome">
         <h1>Lawking</h1>
         <p>Offline legal Markdown browser with verified links and audit warnings.</p>
-        <p>Search above or choose a book.</p>
+        <p>Search all laws on the left, or open a book from the tree.</p>
       </div>
     `;
   }
