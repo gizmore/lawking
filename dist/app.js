@@ -7,6 +7,19 @@ const Lawking = (() => {
   let searchSeq = 0;
   let knowledge = [];
   let knowledgeTerms = [];
+  const ASSET_VERSION = String(window.LAWKING_ASSET_VERSION || "2026-06-28-3").trim();
+
+  function versionedUrl(path) {
+    if (!ASSET_VERSION) return path;
+    try {
+      const url = new URL(path, window.location.href);
+      url.searchParams.set("v", ASSET_VERSION);
+      return url.toString();
+    } catch (e) {
+      const glue = String(path).includes("?") ? "&" : "?";
+      return String(path) + glue + "v=" + encodeURIComponent(ASSET_VERSION);
+    }
+  }
 
   const elBooks = () => document.getElementById("books");
   const elResults = () => document.getElementById("results");
@@ -38,7 +51,7 @@ const Lawking = (() => {
 
   async function loadJson(path, fallback) {
     try {
-      const res = await fetch(path);
+      const res = await fetch(versionedUrl(path));
       if (!res.ok) throw new Error(res.status + " " + path);
       return await res.json();
     } catch (e) {
@@ -76,7 +89,7 @@ const Lawking = (() => {
     for (const candidate of candidateMarkdownPaths(path)) {
       tried.push(candidate);
 
-      const res = await fetch(candidate);
+      const res = await fetch(versionedUrl(candidate));
 
       if (res.ok) {
         return {

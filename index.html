@@ -8,11 +8,11 @@
   <meta name="description" content="lawking.ink — Gesetzestexte, sauber verlinkt und hackerfreundlich.">
 
   <!-- Favicons / browser -->
-  <link rel="icon" href="favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" sizes="32x32" href="dist/icons/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="dist/icons/favicon-16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="dist/icons/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" href="dist/favicon.ico?v=2026-06-28-3" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="dist/icons/favicon-32.png?v=2026-06-28-3">
+  <link rel="icon" type="image/png" sizes="16x16" href="dist/icons/favicon-16.png?v=2026-06-28-3">
+  <link rel="apple-touch-icon" sizes="180x180" href="dist/icons/apple-touch-icon.png?v=2026-06-28-3">
+  <link rel="manifest" href="site.webmanifest?v=2026-06-28-3">
   <meta name="theme-color" content="#050505">
 
   <!-- Open Graph: WhatsApp, Matrix, Discord, Slack, Facebook, LinkedIn, etc. -->
@@ -21,8 +21,8 @@
   <meta property="og:title" content="lawking.ink">
   <meta property="og:description" content="Gesetzestexte, sauber verlinkt und hackerfreundlich.">
   <meta property="og:url" content="https://lawking.ink/">
-  <meta property="og:image" content="https://lawking.ink/dist/img/og-image.png">
-  <meta property="og:image:secure_url" content="https://lawking.ink/dist/img/og-image.png">
+  <meta property="og:image" content="https://lawking.ink/dist/img/og-image.png?v=2026-06-28-3">
+  <meta property="og:image:secure_url" content="https://lawking.ink/dist/img/og-image.png?v=2026-06-28-3">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -32,7 +32,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="lawking.ink">
   <meta name="twitter:description" content="Gesetzestexte, sauber verlinkt und hackerfreundlich.">
-  <meta name="twitter:image" content="https://lawking.ink/dist/img/og-image.png">
+  <meta name="twitter:image" content="https://lawking.ink/dist/img/og-image.png?v=2026-06-28-3">
   <meta name="twitter:image:alt" content="lawking logo">
 
   <style>
@@ -66,19 +66,96 @@
       text-decoration-thickness: .08em;
       text-underline-offset: .2em;
     }
+
+    .actions {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 1.25rem 0;
+    }
+
+    .actions a {
+      border: 1px solid #777;
+      border-radius: 999px;
+      padding: .6rem .9rem;
+      text-decoration: none;
+    }
+
+    .actions a:hover,
+    .actions a:focus {
+      border-color: #fff;
+    }
+
+    .slogans {
+      max-width: 760px;
+      margin: 2rem auto 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: .55rem;
+    }
+
+    .slogans li {
+      border: 1px solid #333;
+      border-radius: .8rem;
+      padding: .55rem .8rem;
+      background: #0d0d0d;
+    }
+
+    .slogan-random {
+      max-width: 760px;
+      margin: 1.5rem auto 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
   <main>
-    <img src="dist/icons/icon-512.png" alt="lawking logo">
+    <img src="dist/icons/icon-512.png?v=2026-06-28-3" alt="lawking logo">
     <h1>lawking.ink</h1>
-    <p><a href="browser.html">Browser Demo öffnen</a></p>
+    <p class="actions">
+      <a href="browser-online.html">Online-Version öffnen</a>
+      <a href="browser.html">Offline-Version öffnen</a>
+    </p>
     <p>Gesetzestexte, sauber verlinkt und hackerfreundlich.</p>
     <p>Quelle: <a href="https://github.com/bundestag/gesetze">https://github.com/bundestag/gesetze</a></p>
     <p>Recherchieren Sie in den Büchern mit Querverweisen für maximale Effizienz.</p>
-    <p>Nie wieder Blättern und Blättern!</p>
-    <p>Alles Offline, Preise individuell.</p>
+    <p id="slogan-random" class="slogan-random">Nicht googeln. Lawkingen.</p>
+
+    <ul id="slogans" class="slogans" aria-label="lawking Sprüche">
+      <li>Seien Sie der, der veraktet.</li>
+      <li>Mehr Gesetzbücher als Pokémon? Locka mal §10!</li>
+      <li>Catch ’em all: StGB, BGB, GG.</li>
+      <li>Lawking. Für alle, die Paragraphen nicht nur sammeln, sondern verstehen.</li>
+      <li>Gotta cite ’em all.</li>
+      <li>Nicht googeln. Lawkingen.</li>
+      <li>Der Pokédex für deutsches Recht.</li>
+      <li>§chu, ich wähle dich!</li>
+      <li>Paragraphen fangen leicht gemacht.</li>
+      <li>Wissen statt Wischen.</li>
+      <li>Recht haben ist schwer. Recht finden nicht.</li>
+      <li>Mehr §§, weniger ???.</li>
+      <li>Legal, illegal, lawkingal.</li>
+      <li>Dein Gesetzbuch hat jetzt Hover.</li>
+      <li>Strafbar? Hover mal drüber.</li>
+      <li>Für Menschen, die wissen wollen, was sie gerade nicht dürfen.</li>
+      <li>Deutschland hat Regeln. Wir haben Suchfunktion.</li>
+      <li>Von Augenzeuge bis Zurechnung: klick dich klug.</li>
+      <li>Kein Anwalt. Aber ein verdammt guter Anfang.</li>
+      <li>Einmal Recht zum Mitnehmen, bitte.</li>
+    </ul>
   </main>
+  <script>
+    (() => {
+      const items = [...document.querySelectorAll('#slogans li')].map((el) => el.textContent.trim());
+      const target = document.getElementById('slogan-random');
+      if (items.length && target) {
+        target.textContent = items[Math.floor(Math.random() * items.length)];
+      }
+    })();
+  </script>
 </body>
 </html>
 

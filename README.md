@@ -72,6 +72,21 @@ Format:
 
 Beim Öffnen eines Gesetzbuchs werden passende Begriffe im Text markiert. Der Hinweis erscheint per Hover oder Tastaturfokus.
 
+## Asset-Versionierung
+
+Die statischen Dateien werden mit einer Versionskennung ausgeliefert:
+
+```text
+?v=2026-06-28-3
+```
+
+Die Kennung steht zusätzlich in `ASSET_VERSION`. Bei einem Release nur diese Version in den HTML-Dateien und in `dist/app.js` erhöhen. Dadurch laden Browser neue CSS/JS/Icon/JSON/Markdown-Dateien statt alter Cache-Versionen.
+
+Die Startseite `index.html` verlinkt beide Varianten:
+
+- `browser-online.html`: Online-Version mit serverseitiger Suche.
+- `browser.html`: Offline-Version mit lokalem Suchindex.
+
 ## Start
 
 Offline lokal zum Testen zum Beispiel:
@@ -85,3 +100,15 @@ Dann öffnen:
 ```text
 http://127.0.0.1:8765/browser.html
 ```
+
+## WissenDB StGB-Grundbegriffe
+
+Die Datei `knowledge.json` enthält nun eine deutsche Grundauswahl wichtiger Strafrechtsbegriffe aus dem Umfeld des StGB, z. B. Strafbarkeit, Tatbestand, Vorsatz, Fahrlässigkeit, Rechtswidrigkeit, Schuld, Versuch, Rücktritt, Täterschaft, Teilnahme, Notwehr, Notstand, Diebstahl, Betrug und Körperverletzung.
+
+Die Erklärungen sind kurze Orientierungstexte für Tooltips und ersetzen keine Rechtsberatung.
+
+## Sprüche auf der Startseite
+
+`index.html` zeigt nun eine deutschsprachige Spruchliste und oben daraus zufällig einen Spruch als Blickfang. Die Sprüche stehen direkt in der Startseite, damit keine extra Datei geladen werden muss.
+
+Asset-Version: `2026-06-28-3`.

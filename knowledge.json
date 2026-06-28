@@ -2,37 +2,423 @@
   {
     "begriff": "Augenzeuge",
     "erklaerung": "Eine Person, die einen Vorgang selbst mit eigenen Augen wahrgenommen hat und darüber aussagen kann.",
-    "aliases": ["Augenzeugin", "Augenzeugen"]
+    "aliases": [
+      "Augenzeugin",
+      "Augenzeugen"
+    ]
   },
   {
     "begriff": "Beschuldigter",
     "erklaerung": "Eine Person, gegen die in einem Strafverfahren ermittelt wird.",
-    "aliases": ["Beschuldigte", "Beschuldigten"]
-  },
-  {
-    "begriff": "Vorsatz",
-    "erklaerung": "Wissen und Wollen der Tatbestandsverwirklichung. Vereinfacht: jemand tut etwas absichtlich oder nimmt es bewusst in Kauf.",
-    "aliases": ["vorsätzlich", "vorsätzliche", "vorsätzlichen"]
-  },
-  {
-    "begriff": "Fahrlässigkeit",
-    "erklaerung": "Außerachtlassen der erforderlichen Sorgfalt. Vereinfacht: jemand passt nicht genug auf, obwohl er es müsste.",
-    "aliases": ["fahrlässig", "fahrlässige", "fahrlässigen"]
-  },
-  {
-    "begriff": "Tatbestand",
-    "erklaerung": "Die gesetzlichen Voraussetzungen, die erfüllt sein müssen, damit eine Rechtsfolge eintreten kann.",
-    "aliases": ["Tatbestands", "Tatbestände"]
-  },
-  {
-    "begriff": "Rechtsfolge",
-    "erklaerung": "Das, was rechtlich passiert, wenn die Voraussetzungen einer Norm erfüllt sind, zum Beispiel Strafe, Anspruch oder Verbot.",
-    "aliases": ["Rechtsfolgen"]
+    "aliases": [
+      "Beschuldigte",
+      "Beschuldigten"
+    ]
   },
   {
     "begriff": "Strafbarkeit",
     "erklaerung": "Ein Verhalten ist strafbar, wenn es einen Straftatbestand erfüllt, rechtswidrig ist und dem Täter schuldhaft vorgeworfen werden kann.",
-    "aliases": ["strafbar", "strafbaren", "strafbare", "strafbares", "strafbarer"]
+    "aliases": [
+      "strafbar",
+      "strafbaren",
+      "strafbare",
+      "strafbares",
+      "strafbarer"
+    ]
+  },
+  {
+    "begriff": "Straftat",
+    "erklaerung": "Ein Verhalten, das nach einem Strafgesetz verboten ist und mit Strafe bedroht wird.",
+    "aliases": [
+      "Straftaten",
+      "strafbare Handlung",
+      "strafbaren Handlung"
+    ]
+  },
+  {
+    "begriff": "Tatbestand",
+    "erklaerung": "Die gesetzlichen Merkmale, die erfüllt sein müssen, damit eine Vorschrift auf einen Fall passt.",
+    "aliases": [
+      "Tatbestands",
+      "Tatbestände",
+      "Tatbeständen",
+      "tatbestandlich"
+    ]
+  },
+  {
+    "begriff": "Objektiver Tatbestand",
+    "erklaerung": "Die äußerlich feststellbaren Merkmale einer Straftat, zum Beispiel Handlung, Erfolg und Zusammenhang zwischen beiden.",
+    "aliases": [
+      "objektiven Tatbestand",
+      "objektive Tatbestand"
+    ]
+  },
+  {
+    "begriff": "Subjektiver Tatbestand",
+    "erklaerung": "Die inneren Merkmale einer Straftat, vor allem Vorsatz und manchmal besondere Absichten oder Motive.",
+    "aliases": [
+      "subjektiven Tatbestand",
+      "subjektive Tatbestand"
+    ]
+  },
+  {
+    "begriff": "Vorsatz",
+    "erklaerung": "Wissen und Wollen der Tatbestandsverwirklichung. Vereinfacht: jemand tut etwas absichtlich oder nimmt es bewusst in Kauf.",
+    "aliases": [
+      "vorsätzlich",
+      "vorsätzliche",
+      "vorsätzlichen",
+      "vorsätzlicher",
+      "vorsätzliches"
+    ]
+  },
+  {
+    "begriff": "Fahrlässigkeit",
+    "erklaerung": "Außerachtlassen der erforderlichen Sorgfalt. Vereinfacht: jemand passt nicht genug auf, obwohl er es müsste.",
+    "aliases": [
+      "fahrlässig",
+      "fahrlässige",
+      "fahrlässigen",
+      "fahrlässiger",
+      "fahrlässiges"
+    ]
+  },
+  {
+    "begriff": "Rechtswidrigkeit",
+    "erklaerung": "Eine Tat ist rechtswidrig, wenn sie gegen das Recht verstößt und kein Rechtfertigungsgrund eingreift.",
+    "aliases": [
+      "rechtswidrig",
+      "rechtswidrige",
+      "rechtswidrigen",
+      "rechtswidriger",
+      "rechtswidriges"
+    ]
+  },
+  {
+    "begriff": "Schuld",
+    "erklaerung": "Persönliche Vorwerfbarkeit der Tat. Schuld fehlt zum Beispiel, wenn jemand nicht schuldfähig ist oder entschuldigt handelt.",
+    "aliases": [
+      "schuldhaft",
+      "schuldhafte",
+      "schuldhaften",
+      "Schuldfähigkeit"
+    ]
+  },
+  {
+    "begriff": "Rechtfertigungsgrund",
+    "erklaerung": "Ein Grund, der eine eigentlich tatbestandsmäßige Handlung erlaubt, zum Beispiel Notwehr oder rechtfertigender Notstand.",
+    "aliases": [
+      "Rechtfertigungsgründe",
+      "gerechtfertigt",
+      "rechtfertigen"
+    ]
+  },
+  {
+    "begriff": "Notwehr",
+    "erklaerung": "Verteidigung, die erforderlich ist, um einen gegenwärtigen rechtswidrigen Angriff von sich oder einem anderen abzuwenden.",
+    "aliases": [
+      "notwehr",
+      "Nothilfe"
+    ]
+  },
+  {
+    "begriff": "Notstand",
+    "erklaerung": "Eine Gefahrenlage, in der eine Handlung unter engen Voraussetzungen gerechtfertigt oder entschuldigt sein kann.",
+    "aliases": [
+      "rechtfertigender Notstand",
+      "entschuldigender Notstand"
+    ]
+  },
+  {
+    "begriff": "Versuch",
+    "erklaerung": "Eine Straftat ist versucht, wenn jemand nach seiner Vorstellung unmittelbar zur Tat ansetzt, die Tat aber nicht vollendet wird.",
+    "aliases": [
+      "versucht",
+      "versuchte",
+      "versuchten",
+      "Versuchs"
+    ]
+  },
+  {
+    "begriff": "Vollendung",
+    "erklaerung": "Eine Tat ist vollendet, wenn alle Merkmale des gesetzlichen Tatbestands verwirklicht sind.",
+    "aliases": [
+      "vollendet",
+      "vollendete",
+      "vollendeten"
+    ]
+  },
+  {
+    "begriff": "Rücktritt",
+    "erklaerung": "Beim Versuch kann der Täter unter bestimmten Voraussetzungen strafbefreiend zurücktreten, wenn er die Tat freiwillig aufgibt oder die Vollendung verhindert.",
+    "aliases": [
+      "zurücktritt",
+      "zurückgetreten",
+      "Rücktritt vom Versuch"
+    ]
+  },
+  {
+    "begriff": "Täter",
+    "erklaerung": "Eine Person, die eine Straftat selbst, durch einen anderen oder gemeinsam mit anderen begeht.",
+    "aliases": [
+      "Täterin",
+      "Täters",
+      "Tätern",
+      "Täterinnen"
+    ]
+  },
+  {
+    "begriff": "Teilnehmer",
+    "erklaerung": "Eine Person, die nicht Täter ist, aber durch Anstiftung oder Beihilfe an einer Straftat mitwirkt.",
+    "aliases": [
+      "Teilnehmerin",
+      "Teilnehmern",
+      "Teilnahme"
+    ]
+  },
+  {
+    "begriff": "Anstiftung",
+    "erklaerung": "Bestimmen eines anderen zu dessen vorsätzlich begangener rechtswidriger Tat.",
+    "aliases": [
+      "anstiften",
+      "anstiftet",
+      "angestiftet",
+      "Anstifter"
+    ]
+  },
+  {
+    "begriff": "Beihilfe",
+    "erklaerung": "Hilfeleisten zu einer vorsätzlich begangenen rechtswidrigen Tat eines anderen.",
+    "aliases": [
+      "beihilfe",
+      "Gehilfe",
+      "Gehilfin",
+      "Hilfeleisten"
+    ]
+  },
+  {
+    "begriff": "Mittäterschaft",
+    "erklaerung": "Gemeinsame Begehung einer Straftat aufgrund eines gemeinsamen Tatplans und gemeinsamer Tatherrschaft.",
+    "aliases": [
+      "Mittäter",
+      "Mittäterin",
+      "mittäterschaftlich"
+    ]
+  },
+  {
+    "begriff": "Unterlassen",
+    "erklaerung": "Nichtstun kann strafbar sein, wenn jemand rechtlich dafür einzustehen hat, dass ein Erfolg nicht eintritt.",
+    "aliases": [
+      "unterlässt",
+      "unterlassen",
+      "Unterlassung"
+    ]
+  },
+  {
+    "begriff": "Garantenstellung",
+    "erklaerung": "Eine besondere Rechtspflicht, einen Erfolg abzuwenden, zum Beispiel aus Gesetz, Vertrag, enger Lebensbeziehung oder vorherigem gefährlichem Verhalten.",
+    "aliases": [
+      "Garant",
+      "Garantin",
+      "Garantenpflicht"
+    ]
+  },
+  {
+    "begriff": "Kausalität",
+    "erklaerung": "Zusammenhang zwischen Handlung und Erfolg. Vereinfacht: Ohne die Handlung wäre der Erfolg so nicht eingetreten.",
+    "aliases": [
+      "kausal",
+      "kausale",
+      "kausalen",
+      "Ursächlichkeit"
+    ]
+  },
+  {
+    "begriff": "Zurechnung",
+    "erklaerung": "Bewertung, ob ein Erfolg einer Person rechtlich zugerechnet werden kann, weil sich gerade das geschaffene Risiko verwirklicht hat.",
+    "aliases": [
+      "zurechenbar",
+      "zugerechnet",
+      "objektive Zurechnung"
+    ]
+  },
+  {
+    "begriff": "Irrtum",
+    "erklaerung": "Eine Fehlvorstellung über Tatsachen oder die rechtliche Bewertung. Je nach Art kann ein Irrtum Vorsatz oder Schuld beeinflussen.",
+    "aliases": [
+      "Irrtums",
+      "Tatbestandsirrtum",
+      "Verbotsirrtum"
+    ]
+  },
+  {
+    "begriff": "Strafantrag",
+    "erklaerung": "Erklärung der berechtigten Person, dass eine bestimmte Tat strafrechtlich verfolgt werden soll. Bei manchen Delikten ist er Voraussetzung.",
+    "aliases": [
+      "Strafantrags",
+      "Antragsdelikt",
+      "Antragsdelikte"
+    ]
+  },
+  {
+    "begriff": "Verjährung",
+    "erklaerung": "Nach Ablauf bestimmter Fristen kann eine Tat nicht mehr verfolgt oder eine Strafe nicht mehr vollstreckt werden.",
+    "aliases": [
+      "verjährt",
+      "Verfolgungsverjährung",
+      "Vollstreckungsverjährung"
+    ]
+  },
+  {
+    "begriff": "Freiheitsstrafe",
+    "erklaerung": "Strafe, bei der die Freiheit einer Person für eine bestimmte Zeit oder lebenslang entzogen wird.",
+    "aliases": [
+      "Freiheitsstrafen",
+      "Gefängnisstrafe"
+    ]
+  },
+  {
+    "begriff": "Geldstrafe",
+    "erklaerung": "Strafe, die in Tagessätzen festgesetzt wird. Höhe und Anzahl der Tagessätze hängen von Tat und wirtschaftlichen Verhältnissen ab.",
+    "aliases": [
+      "Geldstrafen",
+      "Tagessatz",
+      "Tagessätze",
+      "Tagessätzen"
+    ]
+  },
+  {
+    "begriff": "Einziehung",
+    "erklaerung": "Gerichtliche Wegnahme von Gegenständen oder Vermögenswerten, die aus einer Tat stammen oder mit ihr zusammenhängen.",
+    "aliases": [
+      "eingezogen",
+      "Einziehung von Taterträgen",
+      "Taterträge"
+    ]
+  },
+  {
+    "begriff": "Diebstahl",
+    "erklaerung": "Wegnahme einer fremden beweglichen Sache in der Absicht, sie sich oder einem Dritten rechtswidrig zuzueignen.",
+    "aliases": [
+      "Diebstahls",
+      "stehlen",
+      "gestohlen"
+    ]
+  },
+  {
+    "begriff": "Raub",
+    "erklaerung": "Diebstahl mit Gewalt gegen eine Person oder Drohung mit gegenwärtiger Gefahr für Leib oder Leben.",
+    "aliases": [
+      "Raubes",
+      "räuberisch",
+      "räuberische"
+    ]
+  },
+  {
+    "begriff": "Betrug",
+    "erklaerung": "Täuschung, die einen Irrtum auslöst und dadurch zu einer Vermögensverfügung und einem Vermögensschaden führt.",
+    "aliases": [
+      "Betrugs",
+      "betrügen",
+      "betrügerisch"
+    ]
+  },
+  {
+    "begriff": "Urkunde",
+    "erklaerung": "Eine verkörperte Gedankenerklärung, die zum Beweis im Rechtsverkehr bestimmt und geeignet ist und ihren Aussteller erkennen lässt.",
+    "aliases": [
+      "Urkunden",
+      "Urkundenfälschung"
+    ]
+  },
+  {
+    "begriff": "Körperverletzung",
+    "erklaerung": "Körperliche Misshandlung oder Gesundheitsschädigung einer anderen Person.",
+    "aliases": [
+      "Körperverletzungen",
+      "körperlich misshandelt",
+      "Gesundheitsschädigung"
+    ]
+  },
+  {
+    "begriff": "Tötungsdelikt",
+    "erklaerung": "Sammelbegriff für Straftaten, die sich gegen das Leben eines Menschen richten, zum Beispiel Totschlag oder Mord.",
+    "aliases": [
+      "Tötungsdelikte",
+      "Totschlag",
+      "Mord"
+    ]
+  },
+  {
+    "begriff": "Mordmerkmal",
+    "erklaerung": "Besonderes gesetzliches Merkmal, das einen vorsätzlichen Tötungsfall als Mord qualifizieren kann, etwa Heimtücke oder Habgier.",
+    "aliases": [
+      "Mordmerkmale",
+      "Heimtücke",
+      "Habgier"
+    ]
+  },
+  {
+    "begriff": "Nötigung",
+    "erklaerung": "Rechtswidriges Zwingen eines Menschen zu einer Handlung, Duldung oder Unterlassung durch Gewalt oder Drohung.",
+    "aliases": [
+      "nötigen",
+      "genötigt",
+      "Drohung",
+      "Gewalt"
+    ]
+  },
+  {
+    "begriff": "Hausfriedensbruch",
+    "erklaerung": "Unerlaubtes Eindringen oder Verweilen in einer Wohnung, einem Geschäftsraum oder einem befriedeten Besitztum.",
+    "aliases": [
+      "Hausfriedensbruchs",
+      "eindringt",
+      "verweilt"
+    ]
+  },
+  {
+    "begriff": "Beleidigung",
+    "erklaerung": "Kundgabe der Missachtung oder Nichtachtung gegenüber einer anderen Person.",
+    "aliases": [
+      "beleidigt",
+      "Beleidigungen",
+      "üble Nachrede",
+      "Verleumdung"
+    ]
+  },
+  {
+    "begriff": "Sachbeschädigung",
+    "erklaerung": "Beschädigen oder Zerstören einer fremden Sache oder eine nicht nur unerhebliche Veränderung ihres Erscheinungsbildes.",
+    "aliases": [
+      "Sachbeschädigungen",
+      "beschädigt",
+      "zerstört"
+    ]
+  },
+  {
+    "begriff": "Strafzumessung",
+    "erklaerung": "Entscheidung über Art und Höhe der Strafe. Dabei berücksichtigt das Gericht belastende und entlastende Umstände.",
+    "aliases": [
+      "Strafmaß",
+      "Strafrahmen",
+      "zumessen"
+    ]
+  },
+  {
+    "begriff": "Bewährung",
+    "erklaerung": "Aussetzung einer Freiheitsstrafe zur Bewährung. Die verurteilte Person muss die Strafe dann unter Auflagen nicht sofort antreten.",
+    "aliases": [
+      "zur Bewährung",
+      "Bewährungszeit",
+      "Bewährungsauflage"
+    ]
+  },
+  {
+    "begriff": "Rechtsfolge",
+    "erklaerung": "Das, was rechtlich passiert, wenn die Voraussetzungen einer Norm erfüllt sind, zum Beispiel Strafe, Maßregel, Einziehung oder Verbot.",
+    "aliases": [
+      "Rechtsfolgen"
+    ]
   }
 ]
-
