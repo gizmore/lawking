@@ -28,5 +28,11 @@
     "begriff": "Rechtsfolge",
     "erklaerung": "Das, was rechtlich passiert, wenn die Voraussetzungen einer Norm erfüllt sind, zum Beispiel Strafe, Anspruch oder Verbot.",
     "aliases": ["Rechtsfolgen"]
+  },
+  {
+    "begriff": "Strafbarkeit",
+    "erklaerung": "Ein Verhalten ist strafbar, wenn es einen Straftatbestand erfüllt, rechtswidrig ist und dem Täter schuldhaft vorgeworfen werden kann.",
+    "aliases": ["strafbar", "strafbaren", "strafbare", "strafbares", "strafbarer"]
   }
 ]
+
