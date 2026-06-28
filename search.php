@@ -19,11 +19,23 @@ $lawDir = $root . '/gesetze';
 $bookFile = $root . '/data/books.json';
 $q = trim((string)($_GET['q'] ?? ''));
 $max = max(1, min(200, (int)($_GET['max'] ?? 100)));
+$minChars = 3;
 
 if ($q === '') {
     echo json_encode([
         'query' => '',
         'mode' => 'empty',
+        'total' => 0,
+        'results' => [],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+if (mb_strlen($q, 'UTF-8') < $minChars) {
+    echo json_encode([
+        'query' => $q,
+        'mode' => 'minchars',
+        'minchars' => $minChars,
         'total' => 0,
         'results' => [],
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

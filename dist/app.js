@@ -5,6 +5,8 @@ const Lawking = (() => {
   let searchTimer = null;
   let searchApi = "";
   let searchSeq = 0;
+  const SEARCH_DELAY_MS = 787;
+  const SEARCH_MIN_CHARS = 3;
   let knowledge = [];
   let knowledgeTerms = [];
   const ASSET_VERSION = String(window.LAWKING_ASSET_VERSION || "2026-06-28-3").trim();
@@ -878,6 +880,12 @@ const Lawking = (() => {
       return;
     }
 
+    if (parsed.raw.length < SEARCH_MIN_CHARS) {
+      elResults().innerHTML = "";
+      elSearchStatus().textContent = `Bitte mindestens ${SEARCH_MIN_CHARS} Zeichen eingeben.`;
+      return;
+    }
+
     if (parsed.mode === "bad-regex") {
       elResults().innerHTML = "";
       elSearchStatus().textContent = `Ungültiger regulärer Ausdruck: ${parsed.error}`;
@@ -922,7 +930,7 @@ const Lawking = (() => {
 
   function doSearchDebounced(query) {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => doSearchNow(query), 120);
+    searchTimer = setTimeout(() => doSearchNow(query), SEARCH_DELAY_MS);
   }
 
   async function init() {

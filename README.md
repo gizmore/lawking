@@ -77,7 +77,7 @@ Beim Öffnen eines Gesetzbuchs werden passende Begriffe im Text markiert. Der Hi
 Die statischen Dateien werden mit einer Versionskennung ausgeliefert:
 
 ```text
-?v=2026-06-28-3
+?v=2026-06-28-4
 ```
 
 Die Kennung steht zusätzlich in `ASSET_VERSION`. Bei einem Release nur diese Version in den HTML-Dateien und in `dist/app.js` erhöhen. Dadurch laden Browser neue CSS/JS/Icon/JSON/Markdown-Dateien statt alter Cache-Versionen.
@@ -111,4 +111,10 @@ Die Erklärungen sind kurze Orientierungstexte für Tooltips und ersetzen keine 
 
 `index.html` zeigt nun eine deutschsprachige Spruchliste und oben daraus zufällig einen Spruch als Blickfang. Die Sprüche stehen direkt in der Startseite, damit keine extra Datei geladen werden muss.
 
-Asset-Version: `2026-06-28-3`.
+Asset-Version: `2026-06-28-4`.
+
+## Update 2026-06-28-4
+
+- Suche startet erst ab 3 Zeichen.
+- Suche wird mit 787 ms Verzögerung entprellt.
+- WissenDB ergänzt: Hochverrat, Gefährdung, demokratisch, Rechtsstaat.

@@ -420,5 +420,47 @@
     "aliases": [
       "Rechtsfolgen"
     ]
+  },
+  {
+    "begriff": "Hochverrat",
+    "erklaerung": "Hochverrat bezeichnet besonders schwere Angriffe gegen den Bestand oder die verfassungsmäßige Ordnung des Bundes oder eines Landes. Gemeint sind Handlungen, die mit Gewalt oder Drohung die staatliche Ordnung beseitigen oder verändern sollen.",
+    "aliases": [
+      "hochverräterisch",
+      "hochverräterische",
+      "hochverräterischen",
+      "hochverräterischer"
+    ]
+  },
+  {
+    "begriff": "Gefährdung",
+    "erklaerung": "Gefährdung bedeutet, dass ein rechtlich geschütztes Gut in eine konkrete oder abstrakte Gefahr gebracht wird. Es muss nicht immer schon ein Schaden eingetreten sein.",
+    "aliases": [
+      "gefährden",
+      "gefährdet",
+      "gefährdete",
+      "gefährdenden",
+      "Gefahr"
+    ]
+  },
+  {
+    "begriff": "demokratisch",
+    "erklaerung": "Demokratisch bedeutet, dass staatliche Macht vom Volk ausgeht und durch Wahlen, Mehrheitsentscheidungen, Grundrechte und rechtsstaatliche Regeln begrenzt wird.",
+    "aliases": [
+      "Demokratie",
+      "demokratische",
+      "demokratischen",
+      "demokratischer"
+    ]
+  },
+  {
+    "begriff": "Rechtsstaat",
+    "erklaerung": "Ein Rechtsstaat bindet alle staatliche Gewalt an Recht und Gesetz. Er schützt Grundrechte, verlangt faire Verfahren und begrenzt staatliches Handeln durch unabhängige Gerichte.",
+    "aliases": [
+      "Rechtsstaates",
+      "rechtsstaatlich",
+      "rechtsstaatliche",
+      "rechtsstaatlichen",
+      "rechtsstaatlicher"
+    ]
   }
 ]
