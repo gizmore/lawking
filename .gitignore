@@ -1,3 +1,5 @@
 build/*
 !build/indexer.py
 data/*
+*.zip
+
