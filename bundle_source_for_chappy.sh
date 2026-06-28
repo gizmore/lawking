@@ -20,7 +20,6 @@ zip -r "$OUT" . \
   -x "venv/*" \
   -x "env/*" \
   -x "node_modules/*" \
-  -x "dist/*" \
   -x "build/*" \
   -x "*.log" \
   -x "*.sqlite" \
